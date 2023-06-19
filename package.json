@@ -1,0 +1,18 @@
+{
+  "name": "gm-freelance-server",
+  "version": "1.0.0",
+  "description": "Upwork project",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/express": "^4.17.17",
+    "express": "^4.18.2",
+    "typescript": "^5.1.3"
+  }
+}
