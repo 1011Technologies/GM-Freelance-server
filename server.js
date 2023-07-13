@@ -2,11 +2,8 @@ require('dotenv').config();
 const express = require("express");
 const session = require('express-session');
 const cors = require("cors");
-const registerRoute = require('./routes/registrationRoutes.js')
-const loginRoute = require('./routes/loginRoute.js')
-
-
-// import workoutRoutes from './routes/workouts';
+const registerRoute = require('./routes/registrationRoutes.js');
+const loginRoute = require('./routes/loginRoute.js');
 
 // express app
 const app = express();
