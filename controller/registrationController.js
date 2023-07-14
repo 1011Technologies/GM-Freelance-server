@@ -3,36 +3,27 @@ const createUser = async (req, res) => {
     try {
         const userDetail = req.body;
         const alreadyregistered = await pool.query(
-            "SELECT * FROM users WHERE email = $1  AND password = $2 AND user_type=$3",
+            "SELECT * FROM users WHERE email = $1 AND user_type=$2",
             [
                 userDetail.email,
-                userDetail.password,
                 userDetail.user_type,
             ]
         );
-
-        if (!alreadyregistered) {
+        if (alreadyregistered.rowCount==0) {
+            
             if (
                 userDetail.password == userDetail.cpassword &&
                 userDetail.password.length >= 8 &&
                 /[!@#$%^&*(),.?":{}|<>]/g.test(userDetail.password)
             ) {
                 const newUser = await pool.query(
-                    "INSERT INTO users (first_name, last_name, user_name, email, password, user_type, city, town, street, house_no, postal_code, geom) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, ST_MakePoint($12, $13))",
+                    "INSERT INTO users (first_name, last_name, email, password, user_type) VALUES ($1, $2, $3, $4, $5)",
                     [
                         userDetail.first_name,
                         userDetail.last_name,
-                        userDetail.user_name,
                         userDetail.email,
                         userDetail.password,
                         userDetail.user_type,
-                        userDetail.city,
-                        userDetail.town,
-                        userDetail.street,
-                        userDetail.house_no,
-                        userDetail.postal_code,
-                        userDetail.longitude,
-                        userDetail.latitude,
                     ]
                 );
 
@@ -59,6 +50,9 @@ const createUser = async (req, res) => {
         res.status(500).json({ error: "Server error" });
     }
 }
+
+
+
 
 module.exports = {
     createUser

@@ -1,21 +1,21 @@
 const pool = require('../db.js');
-// const session = require('express-session');
+const session = require('express-session');
 
 const loginUser = async (req, res) => {
     try {
         const userDetail = req.body;
         const exist = await pool.query(
-            "SELECT * FROM users WHERE user_name=$1 OR email = $2  AND password = $3 AND user_type=$4",
+            "SELECT * FROM users WHERE email = $1  AND password = $2 AND user_type=$3",
             [
-                userDetail.user_name,
                 userDetail.email,
                 userDetail.password,
                 userDetail.user_type,
             ]
         );
         if (exist) {
-            console.log(exist);
-            // req.session.userId = exist.userId; // Store the user ID in the session
+            const user = exist.rows[0]; // Assuming the first row represents the user data
+            // req.session.user = user; // Store the user data in the session
+            console.log(user);
             res.send("Login successful");
         } else {
             res.status(400).json({

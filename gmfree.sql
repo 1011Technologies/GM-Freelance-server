@@ -16,6 +16,7 @@ CREATE TABLE users (
     coordinates POINT
 );
 
+
 CREATE TABLE messages (
     message_id SERIAL PRIMARY KEY,
     user_id_from INT REFERENCES users(user_id),
