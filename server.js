@@ -1,5 +1,5 @@
 
-//SERVER FILE
+// SERVER FILE
 
 require('dotenv').config();
 const express = require("express");
