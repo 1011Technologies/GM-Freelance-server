@@ -31,7 +31,7 @@ const freelancerData = async (req, res) => {
 
 
 
- const clientData = async (req, res) => {
+const clientData = async (req, res) => {
     try {
         const { rating, total_job_post, total_hires, company } = req.body;
 
@@ -72,13 +72,12 @@ const uploadProfilePicture = async (req, res) => {
             [req.file.filename, sessionUserId]
         );
         await pool.query("COMMIT");
-
-        res.send("Profile picture uploaded");
+        const fileName = req.file.filename;
+        // res.send("Profile picture uploaded");
         // or
-        // res.json({
-        //     success: 1,
-        //     profile_url: `http://localhost:5000/pic/${req.file.filename}`
-        // });
+        res.json({
+            fileName
+        });
 
     } catch (error) {
         await pool.query("ROLLBACK");

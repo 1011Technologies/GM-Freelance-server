@@ -9,7 +9,7 @@ router.post('/freelancerdata', freelancerData)
 
 
 
- //PICTURE UPLOAD
+//PICTURE UPLOAD
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -21,6 +21,7 @@ const storage = multer.diskStorage({
 })
 const upload = multer({
     storage: storage,
+    limits: { fileSize: 1024 * 1024 }, // 1 MB limit
 })
 
 const uploadPath = path.join(__dirname, '../../uploads');
