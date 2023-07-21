@@ -6,10 +6,9 @@ const loginUser = async (req, res) => {
     try {
         const userDetail = req.body;
         const exist = await pool.query(
-            "SELECT * FROM users WHERE email = $1  AND user_type=$2",
+            "SELECT * FROM users WHERE email = $1 ",
             [
                 userDetail.email,
-                userDetail.user_type,
             ]
         );
         if (exist.rows.length > 0) {
@@ -50,7 +49,7 @@ const loginUser = async (req, res) => {
 };
 
 
- async function checkPassword(plainPassword, hashedPassword) {
+async function checkPassword(plainPassword, hashedPassword) {
     const match = await bcrypt.compare(plainPassword, hashedPassword);
     return match;
 }
