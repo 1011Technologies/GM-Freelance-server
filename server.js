@@ -15,11 +15,17 @@ const logoutRoute = require('./components/logout/logoutRoute');
 // express app
 const app = express();
 
+const allowedOrigins = [
+    'http://localhost:5174',
+    'http://localhost:5173',
+];
+
+
 // middleware
 app.use(express.json());
 app.use(
     cors({
-        origin: ["http://localhost:5174"],
+        origin: allowedOrigins,
         methods: ["GET", "POST"],
         credentials: true,
     }));
