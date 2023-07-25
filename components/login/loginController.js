@@ -24,8 +24,14 @@ const loginUser = async (req, res) => {
                     email: user.email,
                     gender: user.gender,
                     phone_no: user.phone_no,
+                    city: user.city,
+                    town: user.town,
+                    street: user.street,
+                    house_no: user.house_no,
                     postal_code: user.postal_code,
-                    geom: user.geom
+                    longitute: user.geom.x,
+                    latitude: user.geom.y
+
                 };
                 res.status(200).json({
                     status: "Login Successful",

@@ -25,14 +25,6 @@ const createUser = async (req, res) => {
                     userDetail.gender,
                     userDetail.phone_no,
                     userDetail.user_type
-                    // userDetail.city,
-                    // userDetail.town,
-                    // userDetail.street,
-                    // userDetail.house_no,
-                    // userDetail.postal_code,
-                    // userDetail.latitude,
-                    // userDetail.longitude
-
                 ]
             );
             res.send("User registered successfully");

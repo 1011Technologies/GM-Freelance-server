@@ -1,11 +1,14 @@
 const express = require('express');
 const multer = require('multer');
 const path = require("path");
-const { freelancerData, clientData, uploadProfilePicture } = require('./userController')
+const { freelancerData, clientData, uploadProfilePicture, updateDetail } = require('./userController')
 const router = express.Router()
 
 router.post('/clientdata', clientData)
 router.post('/freelancerdata', freelancerData)
+
+router.post('/updatedata', updateDetail)
+
 
 
 
