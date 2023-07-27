@@ -3,7 +3,7 @@ const express = require('express')
 const
     {
         createUser,
-    } = require('./registrationController')
+    } = require('../../controllers/registrationController')
 
 const router = express.Router()
 

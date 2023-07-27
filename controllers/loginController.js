@@ -1,4 +1,4 @@
-const pool = require('../../db');
+const pool = require('../db');
 const bcrypt = require('bcrypt');
 const session = require('express-session');
 //
@@ -35,7 +35,7 @@ const loginUser = async (req, res) => {
                 };
                 res.status(200).json({
                     status: "Login Successful",
-                    user: req.session.user, // Send the session information in the response
+                    userInfo: req.session.user, // Send the session information in the response
                 });
             } else {
                 res.status(400).json({
