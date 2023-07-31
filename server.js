@@ -5,10 +5,10 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const cors = require("cors");
-const registerRoute = require('./components/signup/registrationRoutes');
-const loginRoute = require('./components/login/loginRoute');
-const userRoute = require('./components/user/userRoute');
-const logoutRoute = require('./components/logout/logoutRoute');
+// const registerRoute = require('./components/signup/registrationRoutes');
+// const loginRoute = require('./components/login/loginRoute');
+const userRoute = require('./routes/userRoute');
+// const logoutRoute = require('./components/logout/logoutRoute');
 
 
 
@@ -46,11 +46,7 @@ app.use(
 
 
 //ROUTES//
-app.use('/api', userRoute)
-// app.use('/api/userdetail', registerRoute)
-// app.use('/logindetail', loginRoute)
-// app.use('/user', userRoute)
-// app.use('/logout', logoutRoute)
+app.use('/api', userRoute);
 
 
 
