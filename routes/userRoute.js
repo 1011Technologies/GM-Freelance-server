@@ -1,14 +1,11 @@
 const express = require('express');
 const multer = require('multer');
 const path = require("path");
-// const { createUser, } = require('../../controllers/registrationController')
-// const { logoutUser } = require('../../controllers/logoutController');
-// const { loginUser } = require('../../controllers/loginController')
-// const { freelancerData, clientData, uploadProfilePicture, updateDetail } = require('../../controllers/userController')
 const controllers = require('../controllers/index');
+const { validateToken } = require('../utils/JWT');
 const router = express.Router()
 
-
+router.get('/profile', validateToken, controllers.auth)
 
 router.post('/signup', controllers.createUser)
 
@@ -24,7 +21,7 @@ router.post('/clientdata', controllers.clientData)
 router.post('/freelancerdata', controllers.freelancerData)
 
 
-router.post('/updatedata', controllers.updateDetail)
+router.put('/updatedata', controllers.updateDetail)
 
 
 

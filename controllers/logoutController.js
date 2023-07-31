@@ -1,5 +1,3 @@
-
-//
 const logoutUser = async (req, res) => {
     req.session.destroy();
 

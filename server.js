@@ -2,13 +2,12 @@
 require('dotenv').config();
 const express = require("express");
 const session = require('express-session');
-const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const cors = require("cors");
-// const registerRoute = require('./components/signup/registrationRoutes');
-// const loginRoute = require('./components/login/loginRoute');
+const cookieParser = require('cookie-parser');
 const userRoute = require('./routes/userRoute');
-// const logoutRoute = require('./components/logout/logoutRoute');
+const { validateToken } = require('./utils/JWT');
+
 
 
 
@@ -23,10 +22,13 @@ const allowedOrigins = [
 
 // middleware
 app.use(express.json());
+app.use(cookieParser());
+
+
 app.use(
     cors({
         origin: allowedOrigins,
-        methods: ["GET", "POST"],
+        methods: ["GET", "POST", "PUT"],
         credentials: true,
     }));
 
