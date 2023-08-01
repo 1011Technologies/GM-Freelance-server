@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const cors = require("cors");
 const cookieParser = require('cookie-parser');
 const userRoute = require('./routes/userRoute');
-const { validateToken } = require('./utils/JWT');
+// const { validateToken } = require('./utils/JWT');
 
 
 

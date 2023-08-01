@@ -95,8 +95,6 @@ const updateDetail = async (req, res) => {
 
         const salt = await bcrypt.genSalt()
         const hashedPassword = await bcrypt.hash(password, salt);
-
-        const sessionUserId = req.session.user.user_id;
         await pool.query("BEGIN");
         await pool.query(
             `UPDATE users 
@@ -114,15 +112,11 @@ const updateDetail = async (req, res) => {
               postal_code = $11, 
               geom = POINT($12, $13)
             WHERE user_id = $14`,
-            [first_name, last_name, email, hashedPassword, gender, phone_no, city, town, street, house_no, postal_code, longitude, latitude, sessionUserId]
+            [first_name, last_name, email, hashedPassword, gender, phone_no, city, town, street, house_no, postal_code, longitude, latitude, req.user]
         );
 
 
         await pool.query("COMMIT");
-        // const fileName = req.file.filename;
-
-
-
         res.status(200).json({ success: 'updated' });
 
 

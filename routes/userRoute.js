@@ -5,14 +5,14 @@ const controllers = require('../controllers/index');
 const { validateToken } = require('../utils/JWT');
 const router = express.Router()
 
-router.get('/profile', validateToken, controllers.auth)
+router.get('/is-verified', validateToken, controllers.auth)
 
 router.post('/signup', controllers.createUser)
 
 router.post('/logout', controllers.logoutUser);
 
 
-router.post('/login', controllers.loginUser)
+router.post('/login', validateToken, controllers.loginUser)
 
 
 router.post('/clientdata', controllers.clientData)
@@ -21,7 +21,7 @@ router.post('/clientdata', controllers.clientData)
 router.post('/freelancerdata', controllers.freelancerData)
 
 
-router.put('/updatedata', controllers.updateDetail)
+router.put('/updatedata', validateToken, controllers.updateDetail)
 
 
 

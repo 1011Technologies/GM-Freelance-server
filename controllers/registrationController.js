@@ -27,8 +27,11 @@ const createUser = async (req, res) => {
                     userDetail.user_type
                 ]
             );
-            res.send("User registered successfully");
-
+            res
+                .status(200)
+                .json({
+                    status: "User registered successfully.",
+                });
         }
         else {
             res

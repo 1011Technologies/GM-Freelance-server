@@ -1,8 +1,5 @@
-
-
-
 const auth = async (req, res) => {
-    res.json("abc")
+    res.json(true)
 }
 
 module.exports = { auth }
