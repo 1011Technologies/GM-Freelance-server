@@ -1,5 +1,7 @@
 const pool = require('../db');
 const bcrypt = require('bcrypt');
+const { generateToken } = require('../utils/JWT');
+
 
 const createUser = async (req, res) => {
     try {
@@ -14,9 +16,9 @@ const createUser = async (req, res) => {
         if (alreadyregistered.rowCount == 0) {
             const salt = await bcrypt.genSalt()
             const hashedPassword = await bcrypt.hash(userDetail.password, salt);
-            await pool.query(
+            const newUser = await pool.query(
                 `INSERT INTO users (first_name, last_name, email, password, gender, phone_no, user_type)
-                    VALUES ($1, $2, $3, $4, $5, $6,$7);`,
+                    VALUES ($1, $2, $3, $4, $5, $6,$7) RETURNING *;`,
                 [
                     userDetail.first_name,
                     userDetail.last_name,
@@ -27,9 +29,12 @@ const createUser = async (req, res) => {
                     userDetail.user_type
                 ]
             );
+
+            const token = generateToken(newUser.rows[0].user_id)
             res
                 .status(200)
                 .json({
+                    token,
                     status: "User registered successfully.",
                 });
         }
