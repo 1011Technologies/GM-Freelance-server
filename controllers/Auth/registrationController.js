@@ -1,6 +1,6 @@
-const pool = require('../db');
+const pool = require('../../db');
 const bcrypt = require('bcrypt');
-const { generateToken } = require('../utils/JWT');
+const { generateToken } = require('../../utils/JWT');
 
 
 const createUser = async (req, res) => {
