@@ -5,22 +5,11 @@ const controllers = require('../controllers/index');
 const { validateToken } = require('../utils/JWT');
 const router = express.Router()
 
-router.get('/is-verified', validateToken, controllers.auth)
-
-router.post('/signup', controllers.createUser)
-
-router.post('/logout', controllers.logoutUser);
 
 
-router.post('/login', validateToken, controllers.loginUser)
-
-
+router.get('/getuser', validateToken, controllers.userDetail)
 router.post('/clientdata', controllers.clientData)
-
-
 router.post('/freelancerdata', controllers.freelancerData)
-
-
 router.put('/updatedata', validateToken, controllers.updateDetail)
 
 

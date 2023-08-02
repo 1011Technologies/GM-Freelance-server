@@ -6,6 +6,8 @@ const bodyParser = require('body-parser');
 const cors = require("cors");
 const cookieParser = require('cookie-parser');
 const userRoute = require('./routes/userRoute');
+const authRoute = require('./routes/authRoute');
+
 // const { validateToken } = require('./utils/JWT');
 
 
@@ -47,8 +49,10 @@ app.use(
 
 
 
-//ROUTES//
-app.use('/api', userRoute);
+//ROUTES
+app.use('/auth', authRoute);
+app.use('/user', userRoute);
+
 
 
 
