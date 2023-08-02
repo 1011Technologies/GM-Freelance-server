@@ -1,6 +1,6 @@
 const express = require('express');
 const { validateToken } = require('../utils/JWT');
-const authControllers = require('../controllers/Auth/');
+const authControllers = require('../controllers/Auth/index');
 const router = express.Router()
 
 

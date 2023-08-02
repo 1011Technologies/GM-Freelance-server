@@ -5,7 +5,7 @@ const session = require('express-session');
 const bodyParser = require('body-parser');
 const cors = require("cors");
 const cookieParser = require('cookie-parser');
-const index = require('./routes/indexRoute');
+const index = require('./routes/index');
 
 // const { validateToken } = require('./utils/JWT');
 
