@@ -16,8 +16,8 @@ const index = require('./routes/index');
 const app = express();
 
 const allowedOrigins = [
-    'http://localhost:5174',
-    'http://localhost:5173',
+    'https://git.heroku.com/gigmate.git',
+    'http://localhost:3000',
 ];
 
 
