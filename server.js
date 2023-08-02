@@ -5,8 +5,7 @@ const session = require('express-session');
 const bodyParser = require('body-parser');
 const cors = require("cors");
 const cookieParser = require('cookie-parser');
-const userRoute = require('./routes/userRoute');
-const authRoute = require('./routes/authRoute');
+const index = require('./routes/indexRoute');
 
 // const { validateToken } = require('./utils/JWT');
 
@@ -50,8 +49,7 @@ app.use(
 
 
 //ROUTES
-app.use('/auth', authRoute);
-app.use('/user', userRoute);
+app.use('/api', index);
 
 
 
