@@ -11,7 +11,7 @@ const generateToken = (user_id) => {
     return token;
 };
 
-const validateToken = (req, res, next) => {
+const validateToken = async (req, res, next) => {
 
     // try {
     //     const token = req.header("token")
@@ -30,15 +30,19 @@ const validateToken = (req, res, next) => {
     try {
         const authHeader = req.header("Authorization");
         if (!authHeader) {
-            return res.status(403).json("Not Authorized");
+            return res.status(401).json("Authorization header missing");
         }
         const token = authHeader.split(' ')[1]; // Extract the token from the header
-        const validToken = verify(token, SECRET);
+        const validToken = await verify(token, SECRET);
+        if (!validToken) {
+            return res.status(401).json("Token verification failed");
+        }
         req.user = validToken.user;
         next();
     } catch (error) {
-        return res.status(403).json("Not Authorized");
+        return res.status(500).json("Internal Server Error: " + error.message);
     }
+
 
 
 }
