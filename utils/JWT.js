@@ -13,37 +13,34 @@ const generateToken = (user_id) => {
 
 const validateToken = (req, res, next) => {
 
+    // try {
+    //     const token = req.header("token")
+    //     if (!token) {
+    //         return res.status(403).json("Not Authorized")
+    //     }
+    //     const validToken = verify(token, SECRET);
+    //     req.user = validToken.user;
+    //     next() 
+
+    // } catch (error) {
+    //     return res.status(403).json("Not Authorized")
+
+    // }
+
     try {
-        const token = req.header("token")
-        if (!token) {
-            return res.status(403).json("Not Authorized")
+        const authHeader = req.header("Authorization");
+        if (!authHeader) {
+            return res.status(403).json("Not Authorized");
         }
+        const token = authHeader.split(' ')[1]; // Extract the token from the header
         const validToken = verify(token, SECRET);
         req.user = validToken.user;
-        next() 
-
+        next();
     } catch (error) {
-        return res.status(403).json("Not Authorized")
-
+        return res.status(403).json("Not Authorized");
     }
 
 
-
-
-
-    // const token = req.cookies["access-token"];
-    // if (!token) {
-    //     return res.status(403).json({ error: "User not Authenticated" });
-    // }
-    // try {
-    //     const validToken = verify(token, SECRET);
-    //     if (validToken) {
-    //         req.authenticated = true;
-    //         return next();
-    //     }
-    // } catch (error) {
-    //     return res.status(400).json({ error: error.message });
-    // }
 }
 
 module.exports = { generateToken, validateToken };

@@ -11,7 +11,7 @@ const getUserDetail = async (req, res) => {
         if (result.rows.length > 0) {
             const userDetails = result.rows[0];
             await pool.query('COMMIT');
-            return res.status(200).json({ userInfo: userDetails });
+            return res.status(200).json({ userDetails });
         } else {
             await pool.query('ROLLBACK');
             return res.status(400).json({ error: 'User not found' });
