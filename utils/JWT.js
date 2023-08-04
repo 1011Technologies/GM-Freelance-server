@@ -13,20 +13,6 @@ const generateToken = (user_id) => {
 
 const validateToken = async (req, res, next) => {
 
-    // try {
-    //     const token = req.header("token")
-    //     if (!token) {
-    //         return res.status(403).json("Not Authorized")
-    //     }
-    //     const validToken = verify(token, SECRET);
-    //     req.user = validToken.user;
-    //     next() 
-
-    // } catch (error) {
-    //     return res.status(403).json("Not Authorized")
-
-    // }
-
     try {
         const authHeader = req.header("Authorization");
         if (!authHeader) {
@@ -42,9 +28,6 @@ const validateToken = async (req, res, next) => {
     } catch (error) {
         return res.status(500).json("Internal Server Error: " + error.message);
     }
-
-
-
 }
 
 module.exports = { generateToken, validateToken };
