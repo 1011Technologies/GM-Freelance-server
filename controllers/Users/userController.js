@@ -66,20 +66,19 @@ const clientData = async (req, res) => {
 
 const uploadProfilePicture = async (req, res) => {
     try {
-        const sessionUserId = req.session.user.user_id;
         await pool.query("BEGIN");
         await pool.query(
             "UPDATE users SET profile_picture = $1 WHERE user_id = $2",
-            [req.file.filename, sessionUserId]
+            [req.file.filename, req.user]
         );
         await pool.query("COMMIT");
         const fileName = req.file.filename;
-        // res.send("Profile picture uploaded");
-        // or
-        res.json({
-            fileName
-        });
+        const imageUrl = `http://localhost:5000/pic/${fileName}`;
 
+        res.json({
+            fileName,
+            imageUrl,  // The URL to view the uploaded image
+        });
     } catch (error) {
         await pool.query("ROLLBACK");
 

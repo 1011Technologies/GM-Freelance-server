@@ -30,9 +30,9 @@ const upload = multer({
     limits: { fileSize: 1024 * 1024 }, // 1 MB limit
 })
 
-const uploadPath = path.join(__dirname, '../../uploads');
+const uploadPath = path.join(__dirname, '../uploads');
 router.use('/pic', express.static(uploadPath));
-router.post("/uploadprofile_photo", upload.single('profileImage'), userControllers.uploadProfilePicture);
+router.post("/uploadprofile-pic",validateToken, upload.single('profileImage'), userControllers.uploadProfilePicture);
 
 
 
