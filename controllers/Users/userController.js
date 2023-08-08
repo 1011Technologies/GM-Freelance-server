@@ -100,18 +100,16 @@ const updateDetail = async (req, res) => {
             SET 
               first_name = $1, 
               last_name = $2, 
-              email = $3, 
-              password = $4, 
-              gender = $5, 
-              phone_no = $6, 
-              city = $7, 
-              town = $8, 
-              street = $9, 
-              house_no = $10, 
-              postal_code = $11, 
-              geom = POINT($12, $13)
-            WHERE user_id = $14`,
-            [first_name, last_name, email, hashedPassword, gender, phone_no, city, town, street, house_no, postal_code, longitude, latitude, req.user]
+              gender = $3, 
+              phone_no = $4, 
+              city = $5, 
+              town = $6, 
+              street = $7, 
+              house_no = $8, 
+              postal_code = $9, 
+              geom = POINT($10, $11)
+            WHERE user_id = $12`,
+            [first_name, last_name, gender, phone_no, city, town, street, house_no, postal_code, longitude, latitude, req.user]
         );
 
 
