@@ -17,10 +17,10 @@ const updateDetail = async (req, res) => {
               street = $6, 
               house_no = $5, 
               postal_code = $8, 
-              geom = POINT($11, $12)
+              geom = POINT($11, $12),
               country=$10
             WHERE user_id = $13`,
-            [first_name, last_name, gender, phone_no, house_no, street, city, postal_code, state, country, longitude, latitude , req.user]
+            [first_name, last_name, gender, phone_no, house_no, street, city, postal_code, state, country, longitude, latitude, req.user]
         );
 
 
