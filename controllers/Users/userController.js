@@ -90,10 +90,7 @@ const uploadProfilePicture = async (req, res) => {
 
 const updateDetail = async (req, res) => {
     try {
-        const { first_name, last_name, email, password, gender, phone_no, city, town, street, house_no, postal_code, longitude, latitude } = req.body;
-
-        const salt = await bcrypt.genSalt()
-        const hashedPassword = await bcrypt.hash(password, salt);
+        const { first_name, last_name, gender, phone_no, house_no, street, city, state, postal_code, country, longitude, latitude } = req.body;
         await pool.query("BEGIN");
         await pool.query(
             `UPDATE users 
@@ -102,14 +99,15 @@ const updateDetail = async (req, res) => {
               last_name = $2, 
               gender = $3, 
               phone_no = $4, 
-              city = $5, 
-              town = $6, 
-              street = $7, 
-              house_no = $8, 
+              city = $7, 
+              state = $8, 
+              street = $6, 
+              house_no = $5, 
               postal_code = $9, 
-              geom = POINT($10, $11)
-            WHERE user_id = $12`,
-            [first_name, last_name, gender, phone_no, city, town, street, house_no, postal_code, longitude, latitude, req.user]
+              geom = POINT($11, $12)
+              country=$10
+            WHERE user_id = $13`,
+            [first_name, last_name, gender, phone_no, house_no, street, city, state, postal_code, country, longitude, latitude, req.user]
         );
 
 
@@ -129,3 +127,10 @@ const updateDetail = async (req, res) => {
 module.exports = {
     freelancerData, clientData, uploadProfilePicture, updateDetail
 } 
+
+
+
+
+
+
+
