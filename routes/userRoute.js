@@ -2,15 +2,18 @@ const express = require('express');
 const multer = require('multer');
 const path = require("path");
 const userControllers = require('../controllers/Users/index');
+const updateControllers = require('../controllers/Update/index');
 const { validateToken } = require('../utils/JWT');
 const router = express.Router()
 
 
 
 router.get('/profile', validateToken, userControllers.userDetail)
-router.post('/clientdata', userControllers.clientData)
-router.post('/freelancerdata', userControllers.freelancerData)
-router.put('/updateprofile', validateToken, userControllers.updateDetail)
+router.post('/clientdata', validateToken, userControllers.clientData)
+router.post('/freelancerdata', validateToken, userControllers.freelancerData)
+router.put('/updateprofile', validateToken, updateControllers.updateUserDetail)
+router.put('/updatepassword', validateToken, updateControllers.updatePass)
+
 
 
 
@@ -32,7 +35,7 @@ const upload = multer({
 
 const uploadPath = path.join(__dirname, '../uploads');
 router.use('/pic', express.static(uploadPath));
-router.post("/uploadprofile-pic",validateToken, upload.single('profileImage'), userControllers.uploadProfilePicture);
+router.post("/uploadprofile-pic", validateToken, upload.single('profileImage'), updateControllers.updateProfilePic);
 
 
 

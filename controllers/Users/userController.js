@@ -61,71 +61,8 @@ const clientData = async (req, res) => {
 
 
 
-
-
-
-const uploadProfilePicture = async (req, res) => {
-    try {
-        await pool.query("BEGIN");
-        await pool.query(
-            "UPDATE users SET profile_picture = $1 WHERE user_id = $2",
-            [req.file.filename, req.user]
-        );
-        await pool.query("COMMIT");
-        const fileName = req.file.filename;
-        const imageUrl = `http://localhost:5000/pic/${fileName}`;
-
-        res.json({
-            fileName,
-            imageUrl,  // The URL to view the uploaded image
-        });
-    } catch (error) {
-        await pool.query("ROLLBACK");
-
-        console.error(error.message);
-        res.status(500).json({ error: "Server error" });
-    }
-};
-
-
-const updateDetail = async (req, res) => {
-    try {
-        const { first_name, last_name, gender, phone_no, house_no, street, city, state, postal_code, country, longitude, latitude } = req.body;
-        await pool.query("BEGIN");
-        await pool.query(
-            `UPDATE users 
-            SET 
-              first_name = $1, 
-              last_name = $2, 
-              gender = $3, 
-              phone_no = $4, 
-              city = $7, 
-              state = $8, 
-              street = $6, 
-              house_no = $5, 
-              postal_code = $9, 
-              geom = POINT($11, $12)
-              country=$10
-            WHERE user_id = $13`,
-            [first_name, last_name, gender, phone_no, house_no, street, city, state, postal_code, country, longitude, latitude, req.user]
-        );
-
-
-        await pool.query("COMMIT");
-        res.status(200).json({ success: 'updated' });
-
-
-
-    } catch (error) {
-        await pool.query("ROLLBACK");
-
-        console.error(error.message);
-        res.status(500).json({ error: "Server error" });
-    }
-}
-
 module.exports = {
-    freelancerData, clientData, uploadProfilePicture, updateDetail
+    freelancerData, clientData
 } 
 
 
