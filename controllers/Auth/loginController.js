@@ -1,11 +1,6 @@
 const pool = require('../../db');
 const bcrypt = require('bcrypt');
 const { generateToken } = require('../../utils/JWT');
-const session = require('express-session');
-
-
-
-
 const loginUser = async (req, res) => {
     try {
         const userDetail = req.body;
@@ -38,16 +33,10 @@ const loginUser = async (req, res) => {
         res.status(500).json({ error: "Server error" });
     }
 };
-
-
 async function checkPassword(plainPassword, hashedPassword) {
     const match = await bcrypt.compare(plainPassword, hashedPassword);
     return match;
 }
-
-
-
-
 module.exports = {
     loginUser,
 };

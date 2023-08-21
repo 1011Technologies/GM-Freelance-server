@@ -6,33 +6,21 @@ const bodyParser = require('body-parser');
 const cors = require("cors");
 const cookieParser = require('cookie-parser');
 const index = require('./routes/index');
-
-// const { validateToken } = require('./utils/JWT');
-
-
-
-
 // express app
 const app = express();
-
 const allowedOrigins = [
     'https://git.heroku.com/gigmate.git',
     'http://localhost:3000',
 ];
-
-
 // middleware
 app.use(express.json());
 app.use(cookieParser());
-
-
 app.use(
     cors({
         origin: allowedOrigins,
         methods: ["GET", "POST", "PUT"],
         credentials: true,
     }));
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
     session({
@@ -45,15 +33,8 @@ app.use(
         }
     })
 );
-
-
-
 //ROUTES
 app.use('/api', index);
-
-
-
-
 app.listen(process.env.PORT, () => {
     console.log('listening for requests on port', process.env.PORT)
 })

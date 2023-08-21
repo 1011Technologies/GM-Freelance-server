@@ -28,10 +28,6 @@ const freelancerData = async (req, res) => {
 };
 
 
-
-
-
-
 const clientData = async (req, res) => {
     try {
         const { rating, total_job_post, total_hires, company } = req.body;
@@ -58,12 +54,9 @@ const clientData = async (req, res) => {
         res.status(500).json({ error: 'Server error' });
     }
 };
-
-
-
 module.exports = {
     freelancerData, clientData
-} 
+}
 
 
 
