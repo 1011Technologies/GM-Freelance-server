@@ -25,6 +25,6 @@ const upload = multer({
 });
 const uploadPath = path.join(__dirname, '../uploads');
 router.use('/pic', express.static(uploadPath));
-router.post("/uploadprofilepicture", validateToken, upload.single('profileImage'), updateControllers.updateProfilePic);
+router.put("/uploadprofilepicture", validateToken, upload.single('profileImage'), updateControllers.updateProfilePic);
 router.get('/get-file/:file', userControllers.userProfilePicture);
 module.exports = router
