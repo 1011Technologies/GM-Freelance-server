@@ -28,21 +28,14 @@ const getUserDetail = async (req, res) => {
 
 
 const getProfilePic = async (req, res) => {
-    const folderName = req.params.folder;
     const fileName = req.params.file;
-    
-    // Point to the ../../uploads directory for the image
     const filePath = path.join(__dirname, '..', '..', 'uploads', fileName);
-
-    fs.access(filePath, fs.constants.F_OK, (err) => {
-        if (err) {
-            let defaultImage = path.join(process.cwd(), 'src', 'assets', 'images', 'Image_not_available.jpg');
-            res.sendFile(defaultImage);
-        } else {
-            res.sendFile(filePath);
-        }
-    });
+    try {
+        await fs.access(filePath, fs.constants.F_OK);
+        res.sendFile(filePath);
+    } catch (err) {
+        res.status(404).json({ error: "image not available" });
+    }
 };
-
 
 module.exports = { getUserDetail, getProfilePic }
