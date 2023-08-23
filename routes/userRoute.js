@@ -5,7 +5,7 @@ const userControllers = require('../controllers/Users/index');
 const updateControllers = require('../controllers/Update/index');
 const { validateToken } = require('../utils/JWT');
 const router = express.Router();
-router.get('/profile', validateToken, userControllers.userDetail)
+router.get('/profile', validateToken, userControllers.getUserDetail)
 router.post('/clientdata', validateToken, userControllers.clientData)
 router.post('/freelancerdata', validateToken, userControllers.freelancerData)
 router.put('/updateprofile', validateToken, updateControllers.updateUserDetail)
@@ -25,6 +25,6 @@ const upload = multer({
 });
 const uploadPath = path.join(__dirname, '../uploads');
 router.use('/pic', express.static(uploadPath));
-router.put("/uploadprofilepicture", validateToken, upload.single('profileImage'), updateControllers.updateProfilePic);
-router.get('/get-file/:file', userControllers.userProfilePicture);
+router.put("/updateprofilepicture", validateToken, upload.single('profileImage'), updateControllers.updateProfilePic);
+router.get('/getprofilepicture/:file', userControllers.getProfilePic);
 module.exports = router

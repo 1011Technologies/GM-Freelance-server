@@ -10,7 +10,7 @@ const uploadProfilePicture = async (req, res) => {
         );
         await pool.query("COMMIT");
         const fileName = req.file.filename;
-        const imageUrl = `http://localhost:5000/api/users/get-file/${fileName}`;
+        const imageUrl = `http://localhost:5000/api/users/getprofilepicture/${fileName}`;
 
         res.json({
             fileName,
