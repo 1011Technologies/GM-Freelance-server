@@ -1,6 +1,6 @@
 const pool = require('../../db');
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs').promises;
 
 
 const getUserDetail = async (req, res) => {
