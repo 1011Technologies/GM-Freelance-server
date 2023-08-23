@@ -39,7 +39,15 @@ const uploadProfilePicture = async (req, res) => {
             [req.user]
         );
         const oldPicUrl = oldPicResult.rows[0]?.profile_picture;
-        const oldFileName = extractFilenameFromURL(oldPicUrl);
+        if (oldPicUrl != null) {
+            const oldFileName = extractFilenameFromURL(oldPicUrl);
+            if (oldFileName) {
+                const oldFilePath = path.join(__dirname, '..', '..', 'uploads', oldFileName);
+                fs.unlink(oldFilePath).catch(error => {
+                    console.error("Error deleting old picture:", error);
+                });
+            }
+        }
         await pool.query(
             "UPDATE users SET profile_picture = $1 WHERE user_id = $2",
             [imageUrl, req.user]
@@ -49,12 +57,6 @@ const uploadProfilePicture = async (req, res) => {
             fileName,
             imageUrl,
         });
-        if (oldFileName) {
-            const oldFilePath = path.join(__dirname, '..', '..', 'uploads', oldFileName);
-            fs.unlink(oldFilePath).catch(error => {
-                console.error("Error deleting old picture:", error);
-            });
-        }
     } catch (error) {
         await pool.query("ROLLBACK");
         console.error("Error updating profile picture:", error);
