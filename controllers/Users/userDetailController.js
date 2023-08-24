@@ -29,7 +29,7 @@ const getUserDetail = async (req, res) => {
 
 const getProfilePic = async (req, res) => {
     const fileName = req.params.file;
-    const filePath = path.join(__dirname, '..', '..', 'uploads', fileName);
+    const filePath = path.join(__dirname, '..', '..', 'uploads','profilepicture', fileName);
     try {
         await fs.access(filePath, fs.constants.F_OK);
         res.sendFile(filePath);

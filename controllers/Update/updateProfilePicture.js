@@ -2,30 +2,6 @@ const pool = require('../../db');
 const path = require('path');
 const fs = require('fs').promises;
 
-
-// const uploadProfilePicture = async (req, res) => {
-//     try {
-//         await pool.query("BEGIN");
-//         await pool.query(
-//             "UPDATE users SET profile_picture = $1 WHERE user_id = $2",
-//             [req.file.filename, req.user]
-//         );
-//         await pool.query("COMMIT");
-//         const fileName = req.file.filename;
-//         const imageUrl = `http://localhost:5000/api/users/getprofilepicture/${fileName}`;
-
-//         res.json({
-//             fileName,
-//             imageUrl,  // The URL to view the uploaded image
-//         });
-//     } catch (error) {
-//         await pool.query("ROLLBACK");
-
-//         console.error(error.message);
-//         res.status(500).json({ error: "Server error" });
-//     }
-// };
-
 const uploadProfilePicture = async (req, res) => {
     if (!req.file || !req.file.filename) {
         return res.status(400).json({ error: "File not provided" });
@@ -42,7 +18,7 @@ const uploadProfilePicture = async (req, res) => {
         if (oldPicUrl != null) {
             const oldFileName = extractFilenameFromURL(oldPicUrl);
             if (oldFileName) {
-                const oldFilePath = path.join(__dirname, '..', '..', 'uploads', oldFileName);
+                const oldFilePath = path.join(__dirname, '..', '..', 'uploads','profilepicture', oldFileName);
                 fs.unlink(oldFilePath).catch(error => {
                     console.error("Error deleting old picture:", error);
                 });
