@@ -43,35 +43,21 @@ CREATE TABLE client (
     company varchar 
 );
 
-CREATE TABLE skill (
-    skill_id SERIAL PRIMARY KEY,
-    skill_name VARCHAR(55)
-);
-
-
 
 CREATE TABLE job (
     job_id SERIAL PRIMARY KEY,
     client_id INT REFERENCES client(client_id),
     job_title VARCHAR(25),
-    from_date_time TIMESTAMP,
-    till_date_time TIMESTAMP,
-    Duration INT,
-    Description VARCHAR(1000),
-    payment_type VARCHAR(20),
+    job_catagory VARCHAR,
+    from_date date,
+    till_date date,
+    duration INT,
+    description VARCHAR(1000),
+    budget VARCHAR(20),
+    post_time TIMESTAMP,
     FOREIGN KEY (client_id) REFERENCES client(client_id)
 );
 
-
-
-
-CREATE TABLE skill_required (
-    skill_required_id SERIAL PRIMARY KEY,
-    job_id INT,
-    skill_id INT,
-    FOREIGN KEY (job_id) REFERENCES job(job_id),
-    FOREIGN KEY (skill_id) REFERENCES skill(skill_id)
-);
 
 
 CREATE TABLE proposal (
