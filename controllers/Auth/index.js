@@ -1,8 +1,8 @@
 
-const registrationController = require('./registrationController');
-const logoutController = require('./logoutController');
-const loginController = require('./loginController');
-const authController = require('./authController');
+const registrationController = require('./registration.controller');
+const logoutController = require('./logout.controller');
+const loginController = require('./login.controller');
+const authController = require('./auth.controller');
 module.exports = {
   auth:authController.auth,
   createUser: registrationController.createUser,

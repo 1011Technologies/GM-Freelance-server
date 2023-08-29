@@ -1,9 +1,13 @@
-const userController = require('./userController');
-const userDetailController = require('./userDetailController');
-module.exports = {
-    getUserDetail: userDetailController.getUserDetail,
-    getProfilePic: userDetailController.getProfilePic,
-    freelancerData: userController.freelancerData,
-    clientData: userController.clientData
+const sharedController = require('./shared/user.controller');
+const freelancerController = require('./freelancer/freelancer.controller');
+const clientController = require('./client/index');
 
+module.exports = {
+    getUserDetail: sharedController.getUserDetail,
+    deleteProfile: sharedController.deleteProfile,
+    getProfilePic: sharedController.getProfilePic,
+    freelancerData: freelancerController.freelancerData,
+    getClientData: clientController.getClientData,
+    saveClientData: clientController.saveClientData,
+    postJob: clientController.postJob
 };

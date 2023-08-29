@@ -1,12 +1,17 @@
 const express = require('express');
-const userRoute = require('./userRoute');
-const authRoute = require('./authRoute');
-const chatRoute = require('./chatRoute');
+const userRoute = require('./user.route');
+const authRoute = require('./auth.route');
+const chatRoute = require('./chat.route');
+const clientRoute= require('./client.route')
+const freelancerRoute= require('./freelancer.route')
 
 const router = express();
 router.use('/auth', authRoute);
 router.use('/users', userRoute);
 router.use('/chat', chatRoute);
+router.use('/client', clientRoute);
+router.use('/freelancer', freelancerRoute);
+
 
 
 module.exports= router
