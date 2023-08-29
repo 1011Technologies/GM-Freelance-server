@@ -33,8 +33,33 @@ app.use(
         }
     })
 );
+const herokuApiKey = process.env.HEROKU_API_KEY;
+
 //ROUTES
 app.use('/api', index);
-app.listen(process.env.PORT, () => {
+const server = app.listen(process.env.PORT, () => {
     console.log('listening for requests on port', process.env.PORT)
+})
+
+//SOCKETS
+const { validateToken } = require('./utils/JWT');
+const io = require('socket.io')(server);
+io.use(async (socket, next) => {
+    try {
+        const token = socket.handshake.query.token
+        const payload = await validateToken(token);
+        socket.userid = payload.userid;
+        next();
+    } catch (error) {
+        console.error("Socket authentication error:", error);
+        socket.disconnect(true);
+    }
+})
+
+io.on('connection', (socket) => {
+    console.log("Connected:" + socket.userid)
+    socket.on('disconnect', () => {
+        console.log("Disconnected:" + socket.userid)
+
+    })
 })

@@ -2,7 +2,6 @@ const express = require('express');
 const multer = require('multer');
 const path = require("path");
 const chatControllers = require('../controllers/chat/index');
-
 const { validateToken } = require('../utils/JWT');
 const router = express.Router();
 router.get('/send-message', validateToken, chatControllers.sendMessage)
@@ -23,6 +22,5 @@ const upload = multer({
 const uploadPath = path.join(__dirname, '../uploads/chat');
 router.use('/pic', express.static(uploadPath));
 router.post("/send-attachment", validateToken, upload.array('messageAttachment'), chatControllers.sendMessage);
-
 router.get('/get-attachment/:file', chatControllers.getAttachments);
 module.exports = router

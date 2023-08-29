@@ -1,17 +1,24 @@
 const pool = require('../../db');
 const sendMessage = async (req, res) => {
     try {
-        const messageDetail = req.body;
+        const { sent_to_id, proposal_id, message_text } = req.body;
 
         await pool.query(
             "INSERT INTO public.message (sent_to_id, sent_from_id, proposal_id, message_text) VALUES ($1, $2, $3, $4)",
             [
-                messageDetail.sent_to_id,
+                sent_to_id,
                 req.user,
-                messageDetail.proposal_id,
-                messageDetail.message_text
+                proposal_id,
+                message_text
             ]
         );
+
+        // Emit the new message to the recipient using socket.io
+        io.to(sent_to_id).emit('newMessage', {
+            sent_from_id: req.user,
+            proposal_id,
+            message_text
+        });
 
         res.status(201).json({
             message: "Message sent successfully."
@@ -22,10 +29,6 @@ const sendMessage = async (req, res) => {
         res.status(500).json({ error: "Server error" });
     }
 }
-
-
-
-
 module.exports = {
     sendMessage
 };
