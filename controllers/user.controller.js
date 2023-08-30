@@ -99,7 +99,7 @@ const uploadProfilePicture = async (req, res) => {
         if (oldPicUrl != null) {
             const oldFileName = extractFilenameFromURL(oldPicUrl);
             if (oldFileName) {
-                const oldFilePath = path.join(__dirname, '..', '..', 'uploads', 'profilepicture', oldFileName);
+                const oldFilePath = path.join(__dirname, '..', 'uploads', 'profilepicture', oldFileName);
                 fs.unlink(oldFilePath).catch(error => {
                     console.error("Error deleting old picture:", error);
                 });
@@ -128,7 +128,7 @@ function extractFilenameFromURL(url) {
 //USER PROFILE PICTURE
 const getProfilePic = async (req, res) => {
     const fileName = req.params.file;
-    const filePath = path.join(__dirname, '..', '..', 'uploads', 'profilepicture', fileName);
+    const filePath = path.join(__dirname, '..', 'uploads', 'profilepicture', fileName);
     try {
         await fs.access(filePath, fs.constants.F_OK);
         res.sendFile(filePath);

@@ -32,7 +32,7 @@ const sendMessage = async (req, res) => {
 
 const getAttachments = async (req, res) => {
     const fileName = req.params.file;
-    const filePath = path.join(__dirname, '..', '..', 'uploads', 'chat', fileName);
+    const filePath = path.join(__dirname, '..', 'uploads', 'chat', fileName);
     try {
         await fs.access(filePath, fs.constants.F_OK);
         res.sendFile(filePath);
