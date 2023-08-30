@@ -24,6 +24,6 @@ const uploadPath = path.join(__dirname, '../uploads/profilepicture');
 router.use('/pic', express.static(uploadPath));
 router.put("/update-profile-picture", validateToken, upload.single('profileImage'), userControllers.uploadProfilePicture);
 router.get('/get-profile-picture/:file', userControllers.getProfilePic);
-router.get('/delete-account', userControllers.deleteProfile);
+router.delete('/delete-account',validateToken, userControllers.deleteAccount);
 
 module.exports = router

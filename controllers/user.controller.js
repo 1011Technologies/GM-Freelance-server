@@ -28,22 +28,42 @@ const getUserDetail = async (req, res) => {
 };
 
 //DELETE USER ACCOUNT
-const deleteProfile = async (req, res) => {
-    try {
-        await pool.query('BEGIN');
+const deleteAccount = async (req, res) => {
+    const { password } = req.body;
 
-        // Delete the user from the database
-        await pool.query(
-            'DELETE FROM users WHERE user_id=$1 RETURNING *',
+    try {
+        const user = await pool.query(
+            "SELECT * FROM users WHERE user_id = $1",
             [req.user]
         );
-        return res.status(404).json({ error: 'User Deleted Successfully' });
+        if (user.rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'User not found.' });
+        }
+        const passwordMatch = await checkPassword(password, user.rows[0].password);
+        if (!passwordMatch) {
+            return res.status(401).json({ success: false, message: 'Incorrect password.' });
+        }
+        // Delete the user from the database
+        const deleteResult = await pool.query(
+            'DELETE FROM users WHERE user_id = $1 ',
+            [req.user]
+        );
+
+        if (deleteResult.rowCount === 0) {
+            return res.status(404).json({ success: false, message: 'User not found or already deleted.' });
+        }
+
+        res.status(200).json({ success: true, message: 'Account deleted successfully.' });
+
     } catch (error) {
-        await pool.query('ROLLBACK');
         console.error(error.message);
-        res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ success: false, error: 'Server error' });
     }
 };
+async function checkPassword(plainPassword, hashedPassword) {
+    const match = await bcrypt.compare(plainPassword, hashedPassword);
+    return match;
+}
 
 //UPDATE PASSWORD
 const updatePassword = async (req, res) => {
@@ -175,4 +195,4 @@ const updateDetail = async (req, res) => {
 }
 
 
-module.exports = { getUserDetail, getProfilePic, deleteProfile, updatePassword, uploadProfilePicture, updateDetail }
+module.exports = { getUserDetail, getProfilePic, deleteAccount, updatePassword, uploadProfilePicture, updateDetail }
