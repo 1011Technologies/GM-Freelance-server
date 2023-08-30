@@ -1,4 +1,4 @@
-const pool = require('../../db');
+const pool = require('../db');
 
 
 const getFreelancerData = async (req, res) => {

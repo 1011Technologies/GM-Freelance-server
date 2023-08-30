@@ -1,4 +1,4 @@
-const pool = require('../../db');
+const pool = require('../db');
 const sendMessage = async (req, res) => {
     try {
         const { sent_to_id, proposal_id, message_text } = req.body;

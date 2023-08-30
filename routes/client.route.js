@@ -1,7 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const path = require("path");
-const clientController = require('../controllers/client');
+const clientController = require('../controllers/client.controller');
 const { validateToken } = require('../utils/JWT');
 const router = express.Router();
 

@@ -1,7 +1,6 @@
-const pool = require('../../db');
+const pool = require('../db');
 const bcrypt = require('bcrypt');
-const { generateToken } = require('../../utils/JWT');
-
+const { generateToken } = require('../utils/JWT');
 
 const loginUser = async (req, res) => {
     try {
@@ -39,7 +38,6 @@ async function checkPassword(plainPassword, hashedPassword) {
     const match = await bcrypt.compare(plainPassword, hashedPassword);
     return match;
 }
-
 
 //SIGN UP
 const createUser = async (req, res) => {
@@ -112,7 +110,6 @@ const logoutUser = async (req, res) => {
     res.send("Logged out");
 
 }
-
 
 module.exports = {
     loginUser, createUser, logoutUser
