@@ -2,6 +2,6 @@ const clientController = require('./client.controller');
 
 module.exports = {
     getClientData: clientController.getClientData,
-    saveClientData: clientController.saveClientData,
+    updateClientData: clientController.updateClientData,
     postJob:clientController.postJob
 };

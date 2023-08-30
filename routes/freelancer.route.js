@@ -5,5 +5,5 @@ const freelancerController = require('../controllers/freelancer');
 const { validateToken } = require('../utils/JWT');
 const router = express.Router();
 
-router.post('/get-freelancer-data', validateToken, freelancerController.getFreelancerController)
+router.get('/get-freelancer-data', validateToken, freelancerController.getFreelancerController)
 module.exports = router

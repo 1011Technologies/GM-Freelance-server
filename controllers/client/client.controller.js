@@ -1,17 +1,15 @@
 const pool = require('../../db');
 
-const saveClientData = async (req, res) => {
+const updateClientData = async (req, res) => {
     try {
         const { rating, total_job_post, total_hires, company } = req.body;
 
         if (rating && total_job_post && total_hires && company) {
-            const sessionUserId = req.session.user.user_id;
             const roundedRating = Math.round(rating);
-
             await pool.query('BEGIN');
             await pool.query(
-                'INSERT INTO client (user_id, rating, total_job_post, total_hires, company) VALUES ($1, $2, $3, $4, $5)',
-                [sessionUserId, roundedRating, total_job_post, total_hires, company]
+                'UPDATE client SET rating = $2, total_job_post = $3, total_hires = $4, company = $5 WHERE user_id = $1',
+                [req.user, roundedRating, total_job_post, total_hires, company]
             );
             await pool.query('COMMIT');
 
@@ -71,7 +69,7 @@ const postJob = async (req, res) => {
 };
 
 module.exports = {
-    saveClientData, getClientData, postJob
+    updateClientData, getClientData, postJob
 }
 
 

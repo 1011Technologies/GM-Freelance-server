@@ -6,8 +6,8 @@ const { validateToken } = require('../utils/JWT');
 const router = express.Router();
 
 
-router.post('/update-client-data', validateToken, clientController.saveClientData);
-router.post('/get-client-data', validateToken, clientController.getClientData);
+router.put('/update-client-data', validateToken, clientController.updateClientData);
+router.get('/get-client-data', validateToken, clientController.getClientData);
 router.post('/post-job', validateToken, clientController.postJob);
 
 module.exports = router
