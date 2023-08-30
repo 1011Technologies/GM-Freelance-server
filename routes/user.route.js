@@ -1,13 +1,12 @@
 const express = require('express');
 const multer = require('multer');
 const path = require("path");
-const userControllers = require('../controllers/users/index');
-const updateControllers = require('../controllers/update/index');
+const userControllers = require('../controllers/user');
 const { validateToken } = require('../utils/JWT');
 const router = express.Router();
-router.get('/profile', validateToken, userControllers.getUserDetail)
-router.put('/update-profile', validateToken, updateControllers.updateUserDetail)
-router.put('/update-password', validateToken, updateControllers.updatePass)
+router.get('/get-profile', validateToken, userControllers.getUserDetail)
+router.put('/update-profile', validateToken, userControllers.updateDetail)
+router.put('/update-password', validateToken, userControllers.updatePassword)
 //PICTURE UPLOAD
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -23,7 +22,7 @@ const upload = multer({
 });
 const uploadPath = path.join(__dirname, '../uploads/profilepicture');
 router.use('/pic', express.static(uploadPath));
-router.put("/update-profile-picture", validateToken, upload.single('profileImage'), updateControllers.updateProfilePic);
+router.put("/update-profile-picture", validateToken, upload.single('profileImage'), userControllers.uploadProfilePicture);
 router.get('/get-profile-picture/:file', userControllers.getProfilePic);
 router.get('/delete-account', userControllers.deleteProfile);
 

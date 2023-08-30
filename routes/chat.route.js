@@ -1,7 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const path = require("path");
-const chatControllers = require('../controllers/chat/index');
+const chatControllers = require('../controllers/chat');
 const { validateToken } = require('../utils/JWT');
 const router = express.Router();
 router.get('/send-message', validateToken, chatControllers.sendMessage)
