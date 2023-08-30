@@ -1,5 +1,6 @@
 const pool = require('../../db');
 const path = require('path');
+const bcrypt = require('bcrypt');
 const fs = require('fs').promises;
 
 //USER EXISTING DATA
@@ -87,7 +88,7 @@ const uploadProfilePicture = async (req, res) => {
         return res.status(400).json({ error: "File not provided" });
     }
     const fileName = req.file.filename;
-    const imageUrl = `http://localhost:5000/api/users/get-profile-picture/${fileName}`;
+    const imageUrl = `http://localhost:5000/api/user/get-profile-picture/${fileName}`;
     try {
         await pool.query("BEGIN");
         const oldPicResult = await pool.query(
