@@ -52,7 +52,7 @@ const postJob = async (req, res) => {
             await pool.query('BEGIN');
             await pool.query(
                 'INSERT INTO job (client_id, job_title, job_category, duration, description, budget) VALUES ($1, $2, $3, $4, $5, $6)',
-                [client_id, job_title, job_catagory, duration, description, budget]
+                [client_id, job_title, job_category, duration, description, budget]
             );
             await pool.query('COMMIT');
 
