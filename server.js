@@ -7,6 +7,8 @@ const cors = require("cors");
 const cookieParser = require('cookie-parser');
 const index = require('./routes');
 // express app
+const port = process.env.PORT || 5000;
+
 const app = express();
 const allowedOrigins = [
     'https://git.heroku.com/gigmate.git',
@@ -37,7 +39,7 @@ const herokuApiKey = process.env.HEROKU_API_KEY;
 
 //ROUTES
 app.use('/api', index);
-const server = app.listen(process.env.PORT, () => {
+const server = app.listen(port, () => {
     console.log('listening for requests on port', process.env.PORT)
 })
 
