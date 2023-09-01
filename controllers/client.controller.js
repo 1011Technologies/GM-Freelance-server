@@ -46,19 +46,20 @@ const getClientData = async (req, res) => {
 
 const postJob = async (req, res) => {
     try {
-        const { client_id, job_title, job_catagory, duration, description, budget } = req.body;
+        const { client_id, job_title, job_category, duration, description, budget } = req.body;
 
-        if (client_id && job_title && job_catagory && duration && description && budget) {
+        if (client_id && job_title && job_category && duration && description && budget) {
             await pool.query('BEGIN');
             await pool.query(
-                'INSERT INTO job (client_id, job_title, job_catagory, duration, description, budget) VALUES ($1, $2, $3, $4, $5, $6)',
+                'INSERT INTO job (client_id, job_title, job_category, duration, description, budget) VALUES ($1, $2, $3, $4, $5, $6)',
                 [client_id, job_title, job_catagory, duration, description, budget]
             );
             await pool.query('COMMIT');
 
             res.status(200).json({ message: 'Job Posted' });
         } else {
-            res.status(400);
+            res.status(400).json({ error: 'Job cannot be posted.' });
+
         }
     } catch (error) {
         await pool.query('ROLLBACK');
