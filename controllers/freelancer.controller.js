@@ -18,6 +18,7 @@ const getFreelancerData = async (req, res) => {
     }
 };
 
+
 const submitProposal = async (req, res) => {
     try {
         if (!req.file || !req.file.filename) {
