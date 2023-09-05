@@ -1,4 +1,5 @@
 const Pool = require('pg').Pool;
+require('dotenv').config();
 
 // const pool = new Pool({
 //     user: "postgres",
@@ -15,7 +16,7 @@ const Pool = require('pg').Pool;
 //     port: 5432,
 //     database: "db4ms68ttr34po"
 // });
-const connectionString = 'postgres://uxddzqgzebuoiu:68a43ee749a188d2f0de601a57e21b2b91a7b5552cd1eec4e929c8ca7da2b034@ec2-34-238-201-192.compute-1.amazonaws.com:5432/d54ppip3o3cu6e';
+const connectionString = process.env.DATABASE_URL;
 
 const pool = new Pool({
   connectionString: connectionString,
