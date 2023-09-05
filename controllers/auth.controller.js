@@ -95,7 +95,7 @@ const createUser = async (req, res) => {
             res
                 .status(400)
                 .json({
-                    error: "Already registered.",
+                    status: "Already registered.",
                 });
         }
 
