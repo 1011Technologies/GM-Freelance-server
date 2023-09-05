@@ -3,7 +3,6 @@ require('dotenv').config();
 const express = require("express");
 const bodyParser = require('body-parser');
 const cors = require("cors");
-const cookieParser = require('cookie-parser');
 const index = require('./routes');
 // express app
 const port = process.env.PORT || 5000;
@@ -12,7 +11,6 @@ const app = express();
 const allowedOrigins = process.env.ALLOWED_ORIGINS.split(',');
 // middleware
 app.use(express.json());
-app.use(cookieParser());
 app.use(cors({
     origin: allowedOrigins,
     methods: ["GET", "POST", "PUT", "DELETE"],
