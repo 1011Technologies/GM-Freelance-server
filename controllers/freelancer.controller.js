@@ -26,7 +26,7 @@ const submitProposal = async (req, res) => {
         const fileName = req.file.filename;
 
         const { freelancer_id, job_id, proposed_duration, proposed_price, cover_letter } = req.body;
-        // const attachmentUrl = `https://gmfree-server-644f0950f6dd.herokuapp.com/api/user/get-profile-picture/${fileName}`
+        const attachmentUrl = `https://gmfree-server-644f0950f6dd.herokuapp.com/api/user/get-profile-picture/${fileName}`
         if (freelancer_id && job_id && proposed_duration && proposed_price && cover_letter) {
             await pool.query('BEGIN');
             await pool.query(
