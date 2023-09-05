@@ -8,7 +8,10 @@ const index = require('./routes');
 const port = process.env.PORT || 5000;
 
 const app = express();
-const allowedOrigins = process.env.ALLOWED_ORIGINS.split(',');
+const allowedOrigins = [
+    "https://git.heroku.com/gigmate.git",
+    "http://localhost:3000"
+]
 // middleware
 app.use(express.json());
 app.use(cors({
