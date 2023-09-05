@@ -6,6 +6,7 @@ const cors = require("cors");
 const cookieParser = require('cookie-parser');
 const index = require('./routes');
 // express app
+const port = process.env.PORT || 5000;
 
 const app = express();
 const allowedOrigins = process.env.ALLOWED_ORIGINS.split(',');
@@ -20,7 +21,7 @@ app.use(cors({
 app.use(bodyParser.urlencoded({ extended: true }));
 //ROUTES
 app.use('/api', index);
-const server = app.listen(process.env.PORT, () => {
+const server = app.listen(port, () => {
     console.log('listening for requests on port', process.env.PORT)
 })
 
