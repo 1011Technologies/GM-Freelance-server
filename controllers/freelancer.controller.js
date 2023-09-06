@@ -25,7 +25,7 @@ const getFreelancerData = async (req, res) => {
 
 const submitProposal = async (req, res) => {
     try {
-        const fileName = req.file.filename;
+        const fileName = req.file?.filename;
         const attachmentUrl = fileName ? `https://gmfree-server-644f0950f6dd.herokuapp.com/api/freelancer/get-attachment-file/${fileName}` : null;
         const { freelancer_id, job_id, proposed_duration, proposed_price, cover_letter } = req.body;
         if (freelancer_id && job_id && proposed_duration && proposed_price && cover_letter) {
