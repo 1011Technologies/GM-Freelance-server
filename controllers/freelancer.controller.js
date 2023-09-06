@@ -1,4 +1,8 @@
 const pool = require('../db');
+const path = require("path");
+const fs = require('fs').promises;
+
+
 const getFreelancerData = async (req, res) => {
     try {
         await pool.query('BEGIN');
@@ -21,10 +25,9 @@ const getFreelancerData = async (req, res) => {
 
 const submitProposal = async (req, res) => {
     try {
-        const fileName = req.file?.filename;
-
+        const fileName = req.file.filename;
+        const attachmentUrl = fileName ? `https://gmfree-server-644f0950f6dd.herokuapp.com/api/freelancer/get-attachment-file/${fileName}` : null;
         const { freelancer_id, job_id, proposed_duration, proposed_price, cover_letter } = req.body;
-        const attachmentUrl = fileName ? `https://gmfree-server-644f0950f6dd.herokuapp.com/api/user/get-profile-picture/${fileName}` : null;
         if (freelancer_id && job_id && proposed_duration && proposed_price && cover_letter) {
             await pool.query('BEGIN');
             await pool.query(
@@ -41,10 +44,21 @@ const submitProposal = async (req, res) => {
         console.error(error.message);
         res.status(500).json({ error: 'Server error' });
     }
-
-
 };
 
+//USER ATTACHMENT FILE
+const getAttachmentFile = async (req, res) => {
+    const fileName = req.params.file;
+    const filePath = path.join(__dirname, '..', 'uploads', 'proposal', fileName);
+    try {
+        await fs.access(filePath, fs.constants.F_OK);
+        res.sendFile(filePath);
+    } catch (err) {
+        res.status(404).json({ error: "No document exists" });
+    }
+};
+
+
 module.exports = {
-    getFreelancerData, submitProposal
+    getFreelancerData, submitProposal, getAttachmentFile
 }

@@ -19,7 +19,8 @@ const upload = multer({
     limits: { fileSize: 1024 * 1024 * 5 },
 });
 router.get('/get-freelancer-data', validateToken, freelancerController.getFreelancerData);
-
 router.post("/submit-proposal", validateToken, upload.single('proposalAttachment'), freelancerController.submitProposal);
+router.get('/get-attachment-file/:file', freelancerController.getAttachmentFile);
+
 
 module.exports = router;
