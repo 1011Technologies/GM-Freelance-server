@@ -58,9 +58,27 @@ const getAttachmentFile = async (req, res) => {
     }
 };
 
-const getJobById = async (req, res) => {
+const getJobs = async (req, res) => {
     try {
-        const job_id = req.body.job_id;
+        await pool.query('BEGIN');
+        const result = await pool.query(
+            'Select * from job'
+        );
+        if (result.rows.length > 0) {
+            const jobs = result.rows;
+            await pool.query('COMMIT');
+            return res.status(200).json(jobs);
+        }
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        console.error(error.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+};
+
+const getJob = async (req, res) => {
+    try {
+        const job_id = req.params.jobId;
         await pool.query('BEGIN');
         const result = await pool.query(
             'Select * from job where job_id=$1',
@@ -78,7 +96,6 @@ const getJobById = async (req, res) => {
     }
 };
 
-
 module.exports = {
-    getFreelancerData, submitProposal, getAttachmentFile, getJobById
+    getFreelancerData, submitProposal, getAttachmentFile, getJobs, getJob
 }

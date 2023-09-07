@@ -21,7 +21,8 @@ const upload = multer({
 router.get('/get-freelancer-data', validateToken, freelancerController.getFreelancerData);
 router.post("/submit-proposal", validateToken, upload.single('proposalAttachment'), freelancerController.submitProposal);
 router.get('/get-attachment-file/:file', freelancerController.getAttachmentFile);
-router.get('/get-job-by-id',validateToken, freelancerController.getJobById);
+router.get('/get-jobs', validateToken, freelancerController.getJobs);
+router.get('/get-job/:jobId',validateToken, freelancerController.getJob);
 
 
 
