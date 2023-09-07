@@ -30,12 +30,22 @@ const submitProposal = async (req, res) => {
         const { freelancer_id, job_id, proposed_duration, proposed_price, cover_letter } = req.body;
         if (freelancer_id && job_id && proposed_duration && proposed_price && cover_letter) {
             await pool.query('BEGIN');
-            await pool.query(
-                `INSERT INTO proposal (freelancer_id, job_id, proposed_duration, proposed_price, cover_letter, attachment) VALUES ($1, $2, $3, $4, $5, $6);`,
-                [freelancer_id, job_id, proposed_duration, proposed_price, cover_letter, attachmentUrl]
+            const proposelSubmitted = await pool.query(
+                `SELECT* FROM proposal where job_id=$2 AND freelancer_id=$1;`,
+                [freelancer_id, job_id]
             );
-            await pool.query('COMMIT');
-            res.status(200).json({ message: 'Proposal Submitted' });
+            if (!proposelSubmitted) {
+                await pool.query('BEGIN');
+                await pool.query(
+                    `INSERT INTO proposal (freelancer_id, job_id, proposed_duration, proposed_price, cover_letter, attachment) VALUES ($1, $2, $3, $4, $5, $6);`,
+                    [freelancer_id, job_id, proposed_duration, proposed_price, cover_letter, attachmentUrl]
+                );
+                await pool.query('COMMIT');
+                res.status(200).json({ message: 'Proposal Submitted' });
+            }
+            else {
+                res.status(200).json({ message: 'Already Submitted' });
+            }
         } else {
             res.status(400).json({ error: 'Proposal Submission declined.' });
         }
