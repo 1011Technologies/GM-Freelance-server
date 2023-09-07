@@ -96,6 +96,47 @@ const getJob = async (req, res) => {
     }
 };
 
+
+const getClient = async (req, res) => {
+    try {
+        const client_id = req.params.clientId;
+        await pool.query('BEGIN');
+        const result = await pool.query(
+            'Select * from client where client_id=$1',
+            [client_id]
+        );
+        if (result.rows.length > 0) {
+            const client = result.rows[0];
+            await pool.query('COMMIT');
+            return res.status(200).json(client);
+        }
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        console.error(error.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+};
+
+const getClients = async (req, res) => {
+    try {
+        await pool.query('BEGIN');
+        const result = await pool.query('SELECT * FROM client');
+        if (result.rows.length > 0) {
+            const clients = result.rows;
+            await pool.query('COMMIT');
+            return res.status(200).json(clients);
+        } else {
+            await pool.query('COMMIT');
+            return res.status(200)
+        }
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        console.error(error.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+};
+
+
 module.exports = {
-    getFreelancerData, submitProposal, getAttachmentFile, getJobs, getJob
+    getFreelancerData, submitProposal, getAttachmentFile, getJobs, getJob, getClient, getClients
 }

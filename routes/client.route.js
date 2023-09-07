@@ -9,5 +9,8 @@ const router = express.Router();
 router.put('/update-client-data', validateToken, clientController.updateClientData);
 router.get('/get-client-data', validateToken, clientController.getClientData);
 router.post('/post-job', validateToken, clientController.postJob);
+router.get('/get-freelancers',validateToken, clientController.getFreelancers);
+router.get('/get-freelancer/:freelancerId',validateToken, clientController.getFreelancer);
+
 
 module.exports = router

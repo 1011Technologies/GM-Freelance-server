@@ -23,6 +23,10 @@ router.post("/submit-proposal", validateToken, upload.single('proposalAttachment
 router.get('/get-attachment-file/:file', freelancerController.getAttachmentFile);
 router.get('/get-jobs', validateToken, freelancerController.getJobs);
 router.get('/get-job/:jobId',validateToken, freelancerController.getJob);
+router.get('/get-client/:clientId',validateToken, freelancerController.getClient);
+router.get('/get-clients',validateToken, freelancerController.getClients);
+
+
 
 
 

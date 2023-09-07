@@ -69,8 +69,45 @@ const postJob = async (req, res) => {
     }
 };
 
+const getFreelancers = async (req, res) => {
+    try {
+        await pool.query('BEGIN');
+        const result = await pool.query(
+            'Select * from freelancer',
+        );
+        if (result.rows.length > 0) {
+            const freelancers = result.rows;
+            await pool.query('COMMIT');
+            return res.status(200).json(freelancers);
+        }
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        console.error(error.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+};
+
+const getFreelancer = async (req, res) => {
+    try {
+        const freelancer_id = req.params.freelancerId;
+        await pool.query('BEGIN');
+        const result = await pool.query(
+            'Select * from freelancer where freelancer_id=$1',
+            [freelancer_id]
+        );
+        if (result.rows.length > 0) {
+            const freelancer = result.rows[0];
+            await pool.query('COMMIT');
+            return res.status(200).json(freelancer);
+        }
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        console.error(error.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+};
 module.exports = {
-    updateClientData, getClientData, postJob
+    updateClientData, getClientData, postJob, getFreelancers, getFreelancer
 }
 
 
