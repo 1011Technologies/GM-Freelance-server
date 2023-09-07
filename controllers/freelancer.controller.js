@@ -136,7 +136,36 @@ const getClients = async (req, res) => {
     }
 };
 
+const getAppliedJobs = async (req, res) => {
+    try {
+        const freelancerDetails = await pool.query(
+            "SELECT freelancer_id FROM freelancer WHERE user_id = $1",
+            [req.user]
+        );
+
+        if (freelancerDetails.rows.length === 0) {
+            return res.status(400).json({ message: 'User is not a freelancer' });
+        }
+        const freelancerId = freelancerDetails.rows[0].freelancer_id;
+        const result = await pool.query(
+            `SELECT * FROM job j
+             FULL JOIN proposal p on j.job_id = p.job_id
+             WHERE p.freelancer_id = $1`,
+            [freelancerId]
+        );
+        const appliedJobs = result.rows;
+        if (appliedJobs.length > 0) {
+            return res.status(200).json(appliedJobs);
+        } else {
+            return res.status(400).json({ message: 'No applied jobs found' });
+        }
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+};
+
 
 module.exports = {
-    getFreelancerData, submitProposal, getAttachmentFile, getJobs, getJob, getClient, getClients
+    getFreelancerData, submitProposal, getAttachmentFile, getJobs, getJob, getClient, getClients, getAppliedJobs
 }
