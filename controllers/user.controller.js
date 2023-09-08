@@ -1,151 +1,66 @@
 const pool = require('../db');
+const userService = require('../services/user.service');
 const path = require('path');
-const bcrypt = require('bcrypt');
 const fs = require('fs').promises;
-
 //USER EXISTING DATA
-const getUserDetail = async (req, res) => {
+async function getUserDetail(req, res) {
     try {
-        await pool.query('BEGIN');
-
-        const result = await pool.query(
-            'SELECT * FROM users WHERE user_id=$1',
-            [req.user]
-        );
-        if (result.rows.length > 0) {
-            const userDetails = result.rows[0];
-            await pool.query('COMMIT');
-            return res.status(200).json(userDetails);
-        } else {
-            await pool.query('ROLLBACK');
-            return res.status(400).json({ error: 'User not found' });
-        }
+        const userId = req.user;
+        const userDetails = await userService.getUserDetail(userId);
+        res.status(200).json(userDetails);
     } catch (error) {
-        await pool.query('ROLLBACK');
         console.error(error.message);
-        return res.status(500).json({ error: 'Server error' });
+        res.status(400).json({ error: error.message });
     }
-};
+}
 
 //DELETE USER ACCOUNT
-const deleteAccount = async (req, res) => {
-    const { password } = req.body;
-
+async function deleteAccount(req, res) {
     try {
-        const user = await pool.query(
-            "SELECT * FROM users WHERE user_id = $1",
-            [req.user]
-        );
-        if (user.rows.length === 0) {
-            return res.status(404).json({ success: false, message: 'User not found.' });
-        }
-        const passwordMatch = await checkPassword(password, user.rows[0].password);
-        if (!passwordMatch) {
-            return res.status(401).json({ success: false, message: 'Incorrect password.' });
-        }
-        // Delete the user from the database
-        const deleteResult = await pool.query(
-            'DELETE FROM users WHERE user_id = $1 ',
-            [req.user]
-        );
+        const { password } = req.body;
+        const userId = req.user;
 
-        if (deleteResult.rowCount === 0) {
-            return res.status(404).json({ success: false, message: 'User not found or already deleted.' });
-        }
+        const result = await userService.deleteAccount(userId, password);
 
-        res.status(200).json({ success: true, message: 'Account deleted successfully.' });
+        res.status(200).json(result);
 
     } catch (error) {
         console.error(error.message);
-        res.status(500).json({ success: false, error: 'Server error' });
+        res.status(400).json({ success: false, error: error.message });
     }
-};
-async function checkPassword(plainPassword, hashedPassword) {
-    const match = await bcrypt.compare(plainPassword, hashedPassword);
-    return match;
 }
 
 //UPDATE PASSWORD
-const updatePassword = async (req, res) => {
+async function updatePassword(req, res) {
     try {
         const { current_password, new_password } = req.body;
-
-        // Fetch the user's stored hashed password from the database
-        const result = await pool.query("SELECT password FROM users WHERE user_id = $1", [req.user]);
-        const storedHashedPassword = result.rows[0].password;
-
-        // Check if the current password matches the stored password
-        const isMatch = await bcrypt.compare(current_password, storedHashedPassword);
-
-        if (!isMatch) {
-            return res.status(400).json({ success: false, message: 'Current password is incorrect.' });
-        }
-
-        // If the current password is correct, hash the new password and update it in the database
-        const salt = await bcrypt.genSalt();
-        const hashedPassword = await bcrypt.hash(new_password, salt);
-
-        await pool.query("BEGIN");
-        await pool.query(
-            "UPDATE users  SET password=$1 WHERE user_id = $2",
-            [hashedPassword, req.user]
-        );
-
-        await pool.query('COMMIT');
-        res.status(200).json({ success: true, message: 'Password updated successfully.' });
-
+        const userId = req.user;
+        const result = await userService.updatePassword(userId, current_password, new_password);
+        res.status(200).json(result);
     } catch (error) {
-        await pool.query('ROLLBACK');
-
         console.error(error.message);
-        res.status(500).json({ success: false, error: 'Server error' });
+        res.status(400).json({ success: false, error: error.message });
     }
 }
 
 //UPLOAD PROFILE PICTURE
-const uploadProfilePicture = async (req, res) => {
+async function uploadProfilePicture(req, res) {
     if (!req.file || !req.file.filename) {
         return res.status(400).json({ error: "File not provided" });
     }
+    const userId = req.user;
     const fileName = req.file.filename;
     const imageUrl = `https://gmfree-server-644f0950f6dd.herokuapp.com/api/user/get-profile-picture/${fileName}`;
     try {
-        await pool.query("BEGIN");
-        const oldPicResult = await pool.query(
-            "SELECT profile_picture FROM users WHERE user_id = $1",
-            [req.user]
-        );
-        const oldPicUrl = oldPicResult.rows[0]?.profile_picture;
-        if (oldPicUrl != null) {
-            const oldFileName = extractFilenameFromURL(oldPicUrl);
-            if (oldFileName) {
-                const oldFilePath = path.join(__dirname, '..', 'uploads', 'profilepicture', oldFileName);
-                fs.unlink(oldFilePath).catch(error => {
-                    console.error("Error deleting old picture:", error);
-                });
-            }
-        }
-        await pool.query(
-            "UPDATE users SET profile_picture = $1 WHERE user_id = $2",
-            [imageUrl, req.user]
-        );
-        await pool.query("COMMIT");
-        res.json({
-            fileName,
-            imageUrl,
-        });
+        const result = await userService.uploadProfilePicture(userId, fileName, imageUrl);
+        res.json(result);
     } catch (error) {
-        await pool.query("ROLLBACK");
         console.error("Error updating profile picture:", error);
         res.status(500).json({ error: "Server error" });
     }
-};
-
-function extractFilenameFromURL(url) {
-    return url.split('/').pop();
 }
 
-//USER PROFILE PICTURE
+//GET USER PROFILE PICTURE ( NO FUNCTION IN USER>SERVICE FILE )
 const getProfilePic = async (req, res) => {
     const fileName = req.params.file;
     const filePath = path.join(__dirname, '..', 'uploads', 'profilepicture', fileName);
@@ -158,37 +73,15 @@ const getProfilePic = async (req, res) => {
 };
 
 //UPDATE USER DETAILS
-const updateDetail = async (req, res) => {
+async function updateDetail(req, res) {
     try {
-        const { first_name, last_name, gender, phone_no, house_no, street, city, postal_code, state, country, longitude, latitude } = req.body;
-        await pool.query("BEGIN");
-        await pool.query(
-            `UPDATE users 
-            SET 
-              first_name = $1, 
-              last_name = $2, 
-              gender = $3, 
-              phone_no = $4, 
-              city = $7, 
-              state = $9, 
-              street = $6, 
-              house_no = $5, 
-              postal_code = $8, 
-              geom = POINT($11, $12),
-              country=$10
-            WHERE user_id = $13`,
-            [first_name, last_name, gender, phone_no, house_no, street, city, postal_code, state, country, longitude, latitude, req.user]
-        );
+        const userDetails = req.body;
+        const userId = req.user;
 
-
-        await pool.query("COMMIT");
-        res.status(200).json({ success: 'updated' });
-
-
+        const result = await userService.updateDetail(userId, userDetails);
+        res.status(200).json(result);
 
     } catch (error) {
-        await pool.query("ROLLBACK");
-
         console.error(error.message);
         res.status(500).json({ error: "Server error" });
     }

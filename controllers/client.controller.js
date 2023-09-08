@@ -1,111 +1,71 @@
-const pool = require('../db');
+const clientService = require('../services/client.service');
 
-const updateClientData = async (req, res) => {
+//UPDATE CLIENT DATA
+async function updateClientData(req, res) {
     try {
         const { rating, total_job_post, total_hires, company } = req.body;
+        const userId = req.user;
 
-        if (rating && total_job_post && total_hires && company) {
-            const roundedRating = Math.round(rating);
-            await pool.query('BEGIN');
-            await pool.query(
-                'UPDATE client SET rating = $2, total_job_post = $3, total_hires = $4, company = $5 WHERE user_id = $1',
-                [req.user, roundedRating, total_job_post, total_hires, company]
-            );
-            await pool.query('COMMIT');
+        const result = await clientService.updateClientData(userId, rating, total_job_post, total_hires, company);
+        res.status(200).json(result);
 
-            res.status(200).json({ message: 'Client detail inserted' });
-        } else {
-            res.status(400).json({ error: 'Enter correct details' });
-        }
     } catch (error) {
-        await pool.query('ROLLBACK');
-
         console.error(error.message);
         res.status(500).json({ error: 'Server error' });
     }
-};
+}
 
-const getClientData = async (req, res) => {
+// GET CLIENT DATA BY TOKEN
+async function getClientData(req, res) {
     try {
-        await pool.query('BEGIN');
-        const result = await pool.query(
-            'Select * from client where user_id=$1',
-            [req.user]
-        );
-        if (result.rows.length > 0) {
-            const clientDetails = result.rows[0];
-            await pool.query('COMMIT');
-            return res.status(200).json(clientDetails);
-        }
+        const userId = req.user;
+        const clientDetails = await clientService.getClientData(userId);
+        res.status(200).json(clientDetails);
     } catch (error) {
-        await pool.query('ROLLBACK');
         console.error(error.message);
         res.status(500).json({ error: 'Server error' });
     }
-};
+}
 
-const postJob = async (req, res) => {
+// POST JOB 
+async function postJob(req, res) {
     try {
         const { client_id, job_title, job_category, duration, description, budget } = req.body;
-
         if (client_id && job_title && job_category && duration && description && budget) {
-            await pool.query('BEGIN');
-            await pool.query(
-                'INSERT INTO job (client_id, job_title, job_category, duration, description, budget) VALUES ($1, $2, $3, $4, $5, $6)',
-                [client_id, job_title, job_category, duration, description, budget]
-            );
-            await pool.query('COMMIT');
-
-            res.status(200).json({ message: 'Job Posted' });
+            const result = await clientService.postJob(client_id, job_title, job_category, duration, description, budget);
+            res.status(200).json(result);
         } else {
             res.status(400).json({ error: 'Job cannot be posted.' });
-
         }
     } catch (error) {
-        await pool.query('ROLLBACK');
-
         console.error(error.message);
         res.status(500).json({ error: 'Server error' });
     }
-};
+}
 
-const getFreelancers = async (req, res) => {
+//GET ALL FREELANCERS
+async function getFreelancers(req, res) {
     try {
-        await pool.query('BEGIN');
-        const result = await pool.query(
-            'Select * from freelancer',
-        );
-        if (result.rows.length > 0) {
-            const freelancers = result.rows;
-            await pool.query('COMMIT');
-            return res.status(200).json(freelancers);
-        }
+        const freelancers = await clientService.getFreelancers();
+        res.status(200).json(freelancers);
     } catch (error) {
-        await pool.query('ROLLBACK');
         console.error(error.message);
         res.status(500).json({ error: 'Server error' });
     }
-};
+}
 
-const getFreelancer = async (req, res) => {
+//GET FREELANCER BY SPECIFIC ID
+async function getFreelancer(req, res) {
     try {
-        const freelancer_id = req.params.freelancerId;
-        await pool.query('BEGIN');
-        const result = await pool.query(
-            'Select * from freelancer where freelancer_id=$1',
-            [freelancer_id]
-        );
-        if (result.rows.length > 0) {
-            const freelancer = result.rows[0];
-            await pool.query('COMMIT');
-            return res.status(200).json(freelancer);
-        }
+        const freelancerId = req.params.freelancerId;
+        const freelancer = await clientService.getFreelancerById(freelancerId);
+        res.status(200).json(freelancer);
     } catch (error) {
-        await pool.query('ROLLBACK');
         console.error(error.message);
         res.status(500).json({ error: 'Server error' });
     }
-};
+}
+
 module.exports = {
     updateClientData, getClientData, postJob, getFreelancers, getFreelancer
 }
