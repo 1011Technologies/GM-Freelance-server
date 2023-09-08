@@ -5,7 +5,6 @@ const clientController = require('../controllers/client.controller');
 const { validateToken } = require('../utils/JWT');
 const router = express.Router();
 
-
 router.put('/update-client-data', validateToken, clientController.updateClientData);
 router.get('/get-client-data', validateToken, clientController.getClientData);
 router.post('/post-job', validateToken, clientController.postJob);
