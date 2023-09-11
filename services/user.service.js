@@ -168,5 +168,9 @@ async function updateDetail(userId, userDetails) {
 }
 
 module.exports = {
-    getUserDetail, deleteAccount, updatePassword, uploadProfilePicture, updateDetail
+    getUserDetail,
+    deleteAccount,
+    updatePassword,
+    uploadProfilePicture,
+    updateDetail
 };

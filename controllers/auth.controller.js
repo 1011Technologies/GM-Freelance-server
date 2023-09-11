@@ -25,5 +25,6 @@ async function createUser(req, res) {
 }
 
 module.exports = {
-    loginUser, createUser
+    loginUser,
+    createUser
 };

@@ -88,4 +88,11 @@ async function updateDetail(req, res) {
 }
 
 
-module.exports = { getUserDetail, getProfilePic, deleteAccount, updatePassword, uploadProfilePicture, updateDetail }
+module.exports = {
+    getUserDetail,
+    getProfilePic,
+    deleteAccount,
+    updatePassword,
+    uploadProfilePicture,
+    updateDetail
+}

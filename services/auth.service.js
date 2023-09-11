@@ -94,5 +94,6 @@ async function register(userDetail) {
 }
 
 module.exports = {
-    login, register
+    login,
+    register
 };

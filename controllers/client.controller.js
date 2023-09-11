@@ -67,7 +67,11 @@ async function getFreelancer(req, res) {
 }
 
 module.exports = {
-    updateClientData, getClientData, postJob, getFreelancers, getFreelancer
+    updateClientData,
+    getClientData,
+    postJob,
+    getFreelancers,
+    getFreelancer
 }
 
 

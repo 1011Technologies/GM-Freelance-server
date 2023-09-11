@@ -33,5 +33,6 @@ const getAttachments = async (req, res) => {
 };
 
 module.exports = {
-    sendMessage, getAttachments
+    sendMessage,
+    getAttachments
 };

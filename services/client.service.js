@@ -97,5 +97,9 @@ async function getFreelancerById(freelancerId) {
 }
 
 module.exports = {
-    updateClientData, getClientData, postJob, getFreelancers, getFreelancerById
+    updateClientData,
+    getClientData,
+    postJob,
+    getFreelancers,
+    getFreelancerById
 };
