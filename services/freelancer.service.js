@@ -147,6 +147,68 @@ async function getAppliedJobsByUserId(userId) {
     }
 }
 
+// GET ALL PROPOSALS BY USER ID
+async function getProposalsByUserId(userId) {
+    try {
+        const freelancerDetails = await pool.query(
+            'SELECT freelancer_id FROM freelancer WHERE user_id = $1',
+            [userId]
+        );
+
+        if (freelancerDetails.rows.length === 0) {
+            return { message: 'User is not a freelancer' };
+        }
+
+        const freelancerId = freelancerDetails.rows[0].freelancer_id;
+
+        const result = await pool.query(
+            'SELECT * FROM proposal WHERE freelancer_id = $1',
+            [freelancerId]
+        );
+
+        const proposals = result.rows;
+
+        if (proposals.length > 0) {
+            return proposals;
+        } else {
+            return { message: 'No proposals found' };
+        }
+    } catch (error) {
+        throw error;
+    }
+}
+
+// GET PROPOSAL BY JOB ID
+async function getProposalByJobId(jobId) {
+    try {
+        await pool.query('BEGIN');
+        const result = await pool.query(
+            'SELECT * FROM proposal WHERE job_id = $1',
+            [jobId]
+        );
+
+        if (result.rows.length > 0) {
+            const proposal = result.rows[0];
+            await pool.query('COMMIT');
+            return proposal;
+        } else {
+            await pool.query('ROLLBACK');
+            return { message: 'Proposal not found' };
+        }
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        throw error;
+    }
+}
+
 module.exports = {
-    getFreelancerDataByUserId, submitProposal, getJobs, getJobById, getClientById, getClients, getAppliedJobsByUserId
+    getFreelancerDataByUserId,
+    submitProposal,
+    getJobs,
+    getJobById,
+    getClientById,
+    getClients,
+    getAppliedJobsByUserId,
+    getProposalsByUserId,
+    getProposalByJobId
 };

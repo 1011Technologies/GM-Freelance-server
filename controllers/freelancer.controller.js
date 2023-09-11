@@ -108,7 +108,49 @@ async function getAppliedJobs(req, res) {
     }
 }
 
+// GET ALL PROPOSALS BY USER ID
+async function getProposals(req, res) {
+    try {
+        const userId = req.user;
+        const proposals = await freelancerService.getProposalsByUserId(userId);
+
+        if (proposals.message) {
+            res.status(400).json(proposals);
+        } else {
+            res.status(200).json(proposals);
+        }
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+}
+
+// GET PROPOSAL BY JOB ID
+async function getProposal(req, res) {
+    try {
+        const jobId = req.params.jobId;
+        const proposal = await freelancerService.getProposalByJobId(jobId);
+
+        if (proposal.message) {
+            res.status(404).json(proposal);
+        } else {
+            res.status(200).json(proposal);
+        }
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+}
 
 module.exports = {
-    getFreelancerData, submitProposal, getAttachmentFile, getJobs, getJob, getClient, getClients, getAppliedJobs
+    getFreelancerData,
+    submitProposal,
+    getAttachmentFile,
+    getJobs,
+    getJob,
+    getClient,
+    getClients,
+    getAppliedJobs,
+    getProposals,
+    getProposal
 }
