@@ -1,5 +1,5 @@
 // messageController.js
-const messageService = require('./messageService');
+const chatService = require('../services/chat.service');
 
 
 //SEND MESSEGE
@@ -7,7 +7,7 @@ async function sendMessage(req, res) {
     try {
         const { sent_to_id, proposal_id, message_text } = req.body;
         const sent_from_id = req.user;
-        const result = await messageService.sendMessage(sent_to_id, sent_from_id, proposal_id, message_text);
+        const result = await chatService.sendMessage(sent_to_id, sent_from_id, proposal_id, message_text);
         io.to(sent_to_id).emit('newMessage', {
             sent_from_id,
             proposal_id,
