@@ -182,15 +182,26 @@ async function submitReview(userId, reviewDetails) {
                 reviewDetails.review_description,
             ]
         );
-
+        const countResult = await pool.query(
+            `SELECT COUNT(*) FROM reviews WHERE review_to = $1;`,
+            [reviewDetails.review_to]
+        );
+        reviewCount = countResult.rows[0].count
+        await pool.query(
+            `UPDATE freelancer SET reviews_count = $1 WHERE user_id = $2;`,
+            [reviewCount, reviewDetails.review_to]
+        );
         await pool.query("COMMIT");
-        return { success: 'review submitted' };
-
+        return {
+            success: 'review submitted',
+            reviewCount: countResult.rows[0].review_count,
+        };
     } catch (error) {
         await pool.query("ROLLBACK");
         throw error;
     }
 }
+
 
 module.exports = {
     getUserDetail,
