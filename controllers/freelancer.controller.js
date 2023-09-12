@@ -142,23 +142,21 @@ async function getProposal(req, res) {
     }
 }
 
-// GET REVIEW BY ID ( COUNT )
-// async function getReviewCount(req, res) {
-//     try {
-//         const user_id = req.user;
-//         const count = await freelancerService.getReviewCount(user_id);
 
-//         if (count) {
-//             res.status(404).json(count);
-//         } else {
-//             res.status(200).json(count);
-//         }
-//     } catch (error) {
-//         res.status(500).json({ error: 'Server error' });
-//     }
-// }
+//UPDATE USER DETAILS
+async function updateData(req, res) {
+    try {
+        const freelancerDetails = req.body;
+        const userId = req.user;
 
+        const result = await freelancerService.updateData(userId, freelancerDetails);
+        res.status(200).json(result);
 
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: "Server error" });
+    }
+}
 module.exports = {
     getFreelancerData,
     submitProposal,
@@ -170,5 +168,5 @@ module.exports = {
     getAppliedJobs,
     getProposals,
     getProposal,
-    // getReviewCount
+    updateData
 }
