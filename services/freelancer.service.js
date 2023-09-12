@@ -87,7 +87,7 @@ async function getClientById(clientId) {
     try {
         await pool.query('BEGIN');
         const result = await pool.query(
-            'select * from users full join client on users.user_id = client.user_id  WHERE client_id=$1',
+            'select * from users inner join client on users.user_id = client.user_id  WHERE client_id=$1',
             [clientId]
         );
         if (result.rows.length > 0) {
@@ -105,7 +105,7 @@ async function getClientById(clientId) {
 async function getClients() {
     try {
         await pool.query('BEGIN');
-        const result = await pool.query('SELECT * FROM users full join client on users.user_id = client.user_id ');
+        const result = await pool.query('SELECT * FROM users inner join client on users.user_id = client.user_id ');
         await pool.query('COMMIT');
         return result.rows;
     } catch (error) {
@@ -202,17 +202,30 @@ async function getProposalByJobId(jobId) {
 }
 
 // GET REVIEW BY ID ( COUNT )
-async function getReviewCount(user_id) {
-    try {
-        await pool.query('BEGIN');
-        const result = await pool.query('SELECT COUNT(*) FROM reviews WHERE review_to  = $1', [user_id]);
-        await pool.query('COMMIT');
-        return result.rows[0].count;
-    } catch (error) {
-        await pool.query('ROLLBACK');
-        throw error;
-    }
-}
+// async function getReviewCount(user_id) {
+//     try {
+//         await pool.query('BEGIN');
+//         const result = await pool.query(`
+//         SELECT reviews.*, users.*, freelancer.*, review_count.count AS review_count
+//         FROM reviews
+//         LEFT JOIN users ON reviews.review_to = users.user_id
+//         LEFT JOIN freelancer ON users.user_id = freelancer.user_id
+//         LEFT JOIN (
+//             SELECT review_to, COUNT(*) AS count
+//             FROM reviews
+//             WHERE review_to = $1
+//             GROUP BY review_to
+//         ) AS review_count ON review_count.review_to = users.user_id
+//         WHERE reviews.review_to = $1;`,
+//             [user_id]
+//         );
+//         await pool.query('COMMIT');
+//         return result.rows[0].count;
+//     } catch (error) {
+//         await pool.query('ROLLBACK');
+//         throw error;
+//     }
+// }
 module.exports = {
     getFreelancerDataByUserId,
     submitProposal,
@@ -223,5 +236,5 @@ module.exports = {
     getAppliedJobsByUserId,
     getProposalsByUserId,
     getProposalByJobId,
-    getReviewCount
+    // getReviewCount
 };
