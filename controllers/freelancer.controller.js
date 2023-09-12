@@ -143,20 +143,20 @@ async function getProposal(req, res) {
 }
 
 // GET REVIEW BY ID ( COUNT )
-async function getReviewCount(req, res) {
-    try {
-        const user_id = req.user;
-        const count = await freelancerService.getReviewCount(user_id);
+// async function getReviewCount(req, res) {
+//     try {
+//         const user_id = req.user;
+//         const count = await freelancerService.getReviewCount(user_id);
 
-        if (count) {
-            res.status(404).json(count);
-        } else {
-            res.status(200).json(count);
-        }
-    } catch (error) {
-        res.status(500).json({ error: 'Server error' });
-    }
-}
+//         if (count) {
+//             res.status(404).json(count);
+//         } else {
+//             res.status(200).json(count);
+//         }
+//     } catch (error) {
+//         res.status(500).json({ error: 'Server error' });
+//     }
+// }
 
 
 module.exports = {
@@ -170,5 +170,5 @@ module.exports = {
     getAppliedJobs,
     getProposals,
     getProposal,
-    getReviewCount
+    // getReviewCount
 }
