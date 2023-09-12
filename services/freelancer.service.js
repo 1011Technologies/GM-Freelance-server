@@ -87,7 +87,7 @@ async function getClientById(clientId) {
     try {
         await pool.query('BEGIN');
         const result = await pool.query(
-            'SELECT * FROM client WHERE client_id=$1',
+            'select * from users full join client on users.user_id = client.user_id  WHERE client_id=$1',
             [clientId]
         );
         if (result.rows.length > 0) {
@@ -105,7 +105,7 @@ async function getClientById(clientId) {
 async function getClients() {
     try {
         await pool.query('BEGIN');
-        const result = await pool.query('SELECT * FROM client');
+        const result = await pool.query('SELECT * FROM users full join client on users.user_id = client.user_id ');
         await pool.query('COMMIT');
         return result.rows;
     } catch (error) {
@@ -201,6 +201,18 @@ async function getProposalByJobId(jobId) {
     }
 }
 
+// GET REVIEW BY ID ( COUNT )
+async function getReviewCount(user_id) {
+    try {
+        await pool.query('BEGIN');
+        const result = await pool.query('SELECT COUNT(*) FROM reviews WHERE review_to  = $1', [user_id]);
+        await pool.query('COMMIT');
+        return result.rows[0].count;
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        throw error;
+    }
+}
 module.exports = {
     getFreelancerDataByUserId,
     submitProposal,
@@ -210,5 +222,6 @@ module.exports = {
     getClients,
     getAppliedJobsByUserId,
     getProposalsByUserId,
-    getProposalByJobId
+    getProposalByJobId,
+    getReviewCount
 };
