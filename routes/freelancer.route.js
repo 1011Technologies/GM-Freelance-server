@@ -28,7 +28,7 @@ router.get('/get-clients',validateToken, freelancerController.getClients);
 router.get('/get-applied-jobs',validateToken, freelancerController.getAppliedJobs);
 router.get('/get-proposals',validateToken, freelancerController.getProposals);
 router.get('/get-proposal/:jobId',validateToken, freelancerController.getProposal);
-router.get('/get-reviews-count',validateToken, freelancerController.getReviewCount);
+// router.get('/get-reviews-count',validateToken, freelancerController.getReviewCount);
 
 
 

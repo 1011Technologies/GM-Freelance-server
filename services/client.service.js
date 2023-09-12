@@ -63,7 +63,7 @@ async function getFreelancers() {
     try {
         await pool.query('BEGIN');
         const result = await pool.query(
-            'SELECT * FROM users  full join freelancer on users.user_id = freelancer.user_id' 
+            'SELECT * FROM users  inner join freelancer on users.user_id = freelancer.user_id' 
         );
 
         if (result.rows.length > 0) {
@@ -82,7 +82,7 @@ async function getFreelancerById(freelancerId) {
     try {
         await pool.query('BEGIN');
         const result = await pool.query(
-            'SELECT * FROM users  full join freelancer on users.user_id = freelancer.user_id WHERE freelancer_id=$1',
+            'SELECT * FROM users  inner join freelancer on users.user_id = freelancer.user_id WHERE freelancer_id=$1',
             [freelancerId]
         );
         if (result.rows.length > 0) {
