@@ -87,12 +87,26 @@ async function updateDetail(req, res) {
     }
 }
 
+// SUBMIT REVIEW
+async function submitReview(req, res) {
+    try {
+        const reviewDetails = req.body;
+        const userId = req.user;
 
+        const result = await userService.submitReview(userId, reviewDetails);
+        res.status(200).json(result);
+
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: "Server error" });
+    }
+}
 module.exports = {
     getUserDetail,
     getProfilePic,
     deleteAccount,
     updatePassword,
     uploadProfilePicture,
-    updateDetail
+    updateDetail,
+    submitReview
 }

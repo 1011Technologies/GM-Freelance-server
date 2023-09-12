@@ -3,7 +3,7 @@ const path = require('path');
 const bcrypt = require('bcrypt');
 const fs = require('fs').promises;
 
-//GET USER DATA
+// GET USER DATA
 async function getUserDetail(userId) {
     try {
         const result = await pool.query(
@@ -21,7 +21,7 @@ async function getUserDetail(userId) {
     }
 }
 
-//DELETE ACCOUNT
+// DELETE ACCOUNT
 async function deleteAccount(userId, password) {
     try {
         const user = await pool.query(
@@ -59,7 +59,7 @@ async function checkPassword(plainPassword, hashedPassword) {
     return match;
 }
 
-//UPDATE PASSWORD
+// UPDATE PASSWORD
 async function updatePassword(userId, currentPassword, newPassword) {
     try {
         const result = await pool.query("SELECT password FROM users WHERE user_id = $1", [userId]);
@@ -86,7 +86,7 @@ async function updatePassword(userId, currentPassword, newPassword) {
     }
 }
 
-//UPLOAD PROFILE PICTURE
+// UPLOAD PROFILE PICTURE
 async function uploadProfilePicture(userId, fileName, imageUrl) {
     try {
         await pool.query("BEGIN");
@@ -122,7 +122,7 @@ function extractFilenameFromURL(url) {
     return url.split('/').pop();
 }
 
-//UPDATE USER DETAILS
+// UPDATE USER DETAILS
 async function updateDetail(userId, userDetails) {
     try {
         await pool.query("BEGIN");
@@ -167,10 +167,36 @@ async function updateDetail(userId, userDetails) {
     }
 }
 
+// SUBMIT REVIEW
+async function submitReview(userId, reviewDetails) {
+    try {
+        await pool.query("BEGIN");
+        await pool.query(
+            `INSERT INTO reviews (review_to, review_from, job_id, ratings, review_description)
+            VALUES($1, $2, $3, $4, $5);`,
+            [
+                reviewDetails.review_to,
+                userId,
+                reviewDetails.job_id,
+                reviewDetails.ratings,
+                reviewDetails.review_description,
+            ]
+        );
+
+        await pool.query("COMMIT");
+        return { success: 'review submitted' };
+
+    } catch (error) {
+        await pool.query("ROLLBACK");
+        throw error;
+    }
+}
+
 module.exports = {
     getUserDetail,
     deleteAccount,
     updatePassword,
     uploadProfilePicture,
-    updateDetail
+    updateDetail,
+    submitReview
 };
