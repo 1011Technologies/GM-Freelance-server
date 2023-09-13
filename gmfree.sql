@@ -143,4 +143,9 @@ CREATE TABLE reviews (
     review_description VARCHAR(255)
 );
 
-
+CREATE TABLE bookmark (
+    bookmark_id SERIAL PRIMARY KEY,
+    client_id INT REFERENCES client(client_id) ON DELETE SET NULL,
+    freelancer_id INT REFERENCES freelancer(freelancer_id) ON DELETE SET NULL,
+    post_time TIMESTAMP DEFAULT NOW()
+);
