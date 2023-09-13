@@ -66,12 +66,54 @@ async function getFreelancer(req, res) {
     }
 }
 
+// ADD BOOKMARK TO SAVE FREELANCER
+async function addBookmark(req, res) {
+    try {
+        const { freelancer_id } = req.body
+        const client_id = req.user
+        const add = await clientService.addBookmark(freelancer_id, client_id)
+        res.status(200).json(add)
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+}
+
+
+// DELETE BOOKMARK TO DELETE FREELANCER
+async function deleteBookmark(req, res) {
+    try {
+        const { freelancer_id } = req.body
+        const client_id = req.user
+        const add = await clientService.deleteBookmark(freelancer_id, client_id)
+        res.status(200).json(add)
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+}
+
+//GET ALL BOOKMARKS 
+async function getBookmarks(req, res) {
+    try {
+        client_id = req.user
+        const freelancers = await clientService.getBookmarks(client_id);
+        res.status(200).json(freelancers);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+}
+
 module.exports = {
     updateClientData,
     getClientData,
     postJob,
     getFreelancers,
-    getFreelancer
+    getFreelancer,
+    addBookmark,
+    deleteBookmark,
+    getBookmarks
 }
 
 
