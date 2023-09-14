@@ -119,7 +119,7 @@ async function deleteBookmark(freelancer_id, client_id) {
             [client_id, freelancer_id]
         )
         await pool.query('COMMIT');
-        return { message: 'Bookmark removed successfully"' };
+        return { message: 'Bookmark removed successfully' };
     } catch (error) {
         await pool.query('ROLLBACK');
         throw error;
