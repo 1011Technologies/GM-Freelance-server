@@ -126,7 +126,7 @@ async function deleteBookmark(freelancer_id, client_id) {
     }
 }
 
-//GET ALL BOOKMARKS 
+// GET ALL BOOKMARKS 
 async function getBookmarks(client_id) {
     try {
         await pool.query('BEGIN');
@@ -146,6 +146,61 @@ async function getBookmarks(client_id) {
     }
 }
 
+// ADD RECENTLY VIEWED FREELANCER ( LIMIT 10 )
+async function addRecentViews(freelancer_id, client_id) {
+    try {
+        await pool.query('BEGIN');
+        const rowCount = await pool.query(
+            'SELECT CAST(COUNT(*) AS INTEGER) FROM recently_viewed WHERE client_id = $1',
+            [client_id]
+        );
+        const rowCountInt = rowCount.rows[0].count;
+        if (rowCountInt >= 5) {
+            const deleteQuery = `
+            DELETE FROM recently_viewed
+            WHERE recently_viewed_id = (
+                SELECT recently_viewed_id
+                FROM recently_viewed
+                WHERE client_id = $1
+                ORDER BY time_added ASC
+                LIMIT 1
+            );
+            `;
+            await pool.query(deleteQuery, [client_id]);
+        }
+        await pool.query(
+            'INSERT INTO recently_viewed (client_id, freelancer_id) VALUES($1, $2)',
+            [client_id, freelancer_id]
+        );
+
+        await pool.query('COMMIT');
+        return { message: 'Added in recent' };
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        throw error;
+    }
+}
+
+// GET ALL RECENTLY VIEWED FREELANCERS
+async function getRecentlyViewed(userId) {
+    try {
+        await pool.query('BEGIN');
+        const result = await pool.query(
+            'SELECT * FROM recently_viewed WHERE client_id=$1',
+            [userId]
+        );
+
+        if (result.rows.length > 0) {
+            const recentlyViewed = result.rows[0];
+            await pool.query('COMMIT');
+            return recentlyViewed;
+        }
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        throw error;
+    }
+}
+
 module.exports = {
     updateClientData,
     getClientData,
@@ -154,5 +209,7 @@ module.exports = {
     getFreelancerById,
     addBookmark,
     deleteBookmark,
-    getBookmarks
+    getBookmarks,
+    addRecentViews,
+    getRecentlyViewed
 };
