@@ -104,6 +104,34 @@ async function getBookmarks(req, res) {
         res.status(500).json({ error: 'Server error' });
     }
 }
+
+
+// ADD RECENTLY VIEWED FREELANCER ( LIMIT 10 )
+async function addRecentView(req, res) {
+    try {
+        const { freelancer_id } = req.body
+        const client_id = req.user
+        const add = await clientService.addRecentViews(freelancer_id, client_id)
+        res.status(200).json(add)
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+}
+
+// GET CLIENT DATA BY TOKEN
+async function getRecent(req, res) {
+    try {
+        const userId = req.user;
+        const clientDetails = await clientService.getRecentlyViewed(userId);
+        res.status(200).json(clientDetails);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+}
+
+
 // GET ALL THE FREELANCERS THAT ARE BOOKMARKED
 async function getBookmarkedFreelancers(req, res) {
     try {
@@ -125,7 +153,9 @@ module.exports = {
     addBookmark,
     deleteBookmark,
     getBookmarks,
-    getBookmarkedFreelancers
+    getBookmarkedFreelancers,
+    addRecentView,
+    getRecent
 }
 
 
