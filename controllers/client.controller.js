@@ -104,6 +104,17 @@ async function getBookmarks(req, res) {
         res.status(500).json({ error: 'Server error' });
     }
 }
+// GET ALL THE FREELANCERS THAT ARE BOOKMARKED
+async function getBookmarkedFreelancers(req, res) {
+    try {
+        client_id = req.user
+        const bookmarkedFreelancer = await clientService.getBookmarkedFreelancers(client_id);
+        res.status(200).json(bookmarkedFreelancer);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+}
 
 module.exports = {
     updateClientData,
@@ -113,7 +124,8 @@ module.exports = {
     getFreelancer,
     addBookmark,
     deleteBookmark,
-    getBookmarks
+    getBookmarks,
+    getBookmarkedFreelancers
 }
 
 

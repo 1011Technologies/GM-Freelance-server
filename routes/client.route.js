@@ -12,6 +12,7 @@ router.get('/get-client-data', validateToken, clientController.getClientData);
 router.get('/get-freelancers',validateToken, clientController.getFreelancers);
 router.get('/get-freelancer/:freelancerId',validateToken, clientController.getFreelancer);
 router.put('/update-client-data', validateToken, clientController.updateClientData);
+router.get('/get-bookmarked-freelancers',validateToken, clientController.getBookmarkedFreelancers);
 
 
 module.exports = router
