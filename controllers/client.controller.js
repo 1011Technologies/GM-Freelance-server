@@ -104,6 +104,10 @@ async function getBookmarks(req, res) {
     }
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0b0f4c8abff0f0893fdf27c36d89873e8d16db6b
 // ADD RECENTLY VIEWED FREELANCER ( LIMIT 10 )
 async function addRecentView(req, res) {
     try {
@@ -129,6 +133,10 @@ async function getRecent(req, res) {
     }
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0b0f4c8abff0f0893fdf27c36d89873e8d16db6b
 // GET ALL THE FREELANCERS THAT ARE BOOKMARKED
 async function getBookmarkedFreelancers(req, res) {
     try {
@@ -150,9 +158,15 @@ module.exports = {
     addBookmark,
     deleteBookmark,
     getBookmarks,
+<<<<<<< HEAD
     addRecentView,
     getRecent,
     getBookmarkedFreelancers
+=======
+    getBookmarkedFreelancers,
+    addRecentView,
+    getRecent
+>>>>>>> 0b0f4c8abff0f0893fdf27c36d89873e8d16db6b
 }
 
 
