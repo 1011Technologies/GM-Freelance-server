@@ -129,6 +129,18 @@ async function getRecent(req, res) {
     }
 }
 
+// GET ALL THE FREELANCERS THAT ARE BOOKMARKED
+async function getBookmarkedFreelancers(req, res) {
+    try {
+        client_id = req.user
+        const bookmarkedFreelancer = await clientService.getBookmarkedFreelancers(client_id);
+        res.status(200).json(bookmarkedFreelancer);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+}
+
 module.exports = {
     updateClientData,
     getClientData,
@@ -139,7 +151,8 @@ module.exports = {
     deleteBookmark,
     getBookmarks,
     addRecentView,
-    getRecent
+    getRecent,
+    getBookmarkedFreelancers
 }
 
 

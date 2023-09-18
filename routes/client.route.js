@@ -14,6 +14,7 @@ router.get('/get-freelancer/:freelancerId',validateToken, clientController.getFr
 router.put('/update-client-data', validateToken, clientController.updateClientData);
 router.post('/recenlty-viewed', validateToken, clientController.addRecentView);
 router.get('/get-recently-viewed',validateToken, clientController.getRecent);
+router.get('/get-bookmarked-freelancers',validateToken, clientController.getBookmarkedFreelancers);
 
 
 module.exports = router

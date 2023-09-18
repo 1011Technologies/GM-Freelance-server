@@ -201,6 +201,29 @@ async function getRecentlyViewed(userId) {
     }
 }
 
+// GET ALL THE FREELANCERS THAT ARE BOOKMARKED
+async function getBookmarkedFreelancers(client_id) {
+    try {
+        await pool.query('BEGIN');
+        const result = await pool.query(
+            `SELECT * 
+            FROM users 
+            LEFT JOIN freelancer ON users.user_id  = freelancer.user_id 
+            LEFT JOIN bookmark ON freelancer.freelancer_id  = bookmark.freelancer_id 
+            WHERE bookmark.client_id =$1`,
+            [client_id]
+        );
+
+        if (result.rows.length > 0) {
+            const bookmarkedFreelancer = result.rows;
+            await pool.query('COMMIT');
+            return bookmarkedFreelancer;
+        }
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        throw error;
+    }
+}
 module.exports = {
     updateClientData,
     getClientData,
@@ -211,5 +234,6 @@ module.exports = {
     deleteBookmark,
     getBookmarks,
     addRecentViews,
-    getRecentlyViewed
+    getRecentlyViewed,
+    getBookmarkedFreelancers
 };
