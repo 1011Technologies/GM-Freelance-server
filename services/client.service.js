@@ -127,18 +127,24 @@ async function deleteBookmark(freelancer_id, client_id) {
 }
 
 //GET ALL BOOKMARKS 
-async function getBookmarks(client_id) {
+async function getBookmarks(user_id) {
     try {
         await pool.query('BEGIN');
-        const result = await pool.query(
-            'SELECT * FROM bookmark WHERE client_id=$1',
-            [client_id]
+        const client = await pool.query(
+            'SELECT client_id FROM client WHERE user_id=$1',
+            [user_id]
         );
+        if (client) {
+            const result = await pool.query(
+                'SELECT * FROM bookmark WHERE client_id=$1',
+                [client.rows[0].client_id]
+            );
 
-        if (result.rows.length > 0) {
-            const bookmarks = result.rows;
-            await pool.query('COMMIT');
-            return bookmarks;
+            if (result.rows.length > 0) {
+                const bookmarks = result.rows;
+                await pool.query('COMMIT');
+                return bookmarks;
+            }
         }
     } catch (error) {
         await pool.query('ROLLBACK');
@@ -204,22 +210,28 @@ async function getRecentlyViewed(userId) {
 
 
 // GET ALL THE FREELANCERS THAT ARE BOOKMARKED
-async function getBookmarkedFreelancers(client_id) {
+async function getBookmarkedFreelancers(user_id) {
     try {
         await pool.query('BEGIN');
-        const result = await pool.query(
-            `SELECT * 
+        const client = await pool.query(
+            'SELECT client_id FROM client WHERE user_id=$1',
+            [user_id]
+        );
+        if (client) {
+            const result = await pool.query(
+                `SELECT * 
             FROM users 
             LEFT JOIN freelancer ON users.user_id  = freelancer.user_id 
             LEFT JOIN bookmark ON freelancer.freelancer_id  = bookmark.freelancer_id 
             WHERE bookmark.client_id =$1`,
-            [client_id]
-        );
+                [client.rows[0].client_id]
+            );
 
-        if (result.rows.length > 0) {
-            const bookmarkedFreelancer = result.rows;
-            await pool.query('COMMIT');
-            return bookmarkedFreelancer;
+            if (result.rows.length > 0) {
+                const bookmarkedFreelancer = result.rows;
+                await pool.query('COMMIT');
+                return bookmarkedFreelancer;
+            }
         }
     } catch (error) {
         await pool.query('ROLLBACK');
