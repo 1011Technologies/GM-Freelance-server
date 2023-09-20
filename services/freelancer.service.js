@@ -206,8 +206,8 @@ async function updateData(userId, freelancerDetails) {
     try {
         await pool.query('BEGIN');
         await pool.query(
-            "UPDATE freelancer SET days_available=$2, hourly_rate=$3 WHERE user_id = $1",
-            [userId, freelancerDetails.days_available, freelancerDetails.hourly_rate]
+            "UPDATE freelancer SET days_available=$2, hourly_rate=$3, title=$4, overview=$5 WHERE user_id = $1",
+            [userId, freelancerDetails.days_available, freelancerDetails.hourly_rate,freelancerDetails.title,freelancerDetails.overview]
         );
 
         await pool.query('COMMIT');
