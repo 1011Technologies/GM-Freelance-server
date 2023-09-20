@@ -95,8 +95,8 @@ async function deleteBookmark(req, res) {
 //GET ALL BOOKMARKS 
 async function getBookmarks(req, res) {
     try {
-        client_id = req.user
-        const freelancers = await clientService.getBookmarks(client_id);
+        user_id = req.user
+        const freelancers = await clientService.getBookmarks(user_id);
         res.status(200).json(freelancers);
     } catch (error) {
         console.error(error.message);
@@ -133,7 +133,7 @@ async function getRecent(req, res) {
 async function getBookmarkedFreelancers(req, res) {
     try {
         client_id = req.user
-        const bookmarkedFreelancer = await clientService.getBookmarkedFreelancers(client_id);
+        const bookmarkedFreelancer = await clientService.getBookmarkedFreelancers(user_id);
         res.status(200).json(bookmarkedFreelancer);
     } catch (error) {
         console.error(error.message);
