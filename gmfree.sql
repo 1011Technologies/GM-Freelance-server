@@ -149,3 +149,10 @@ CREATE TABLE bookmark (
     freelancer_id INT REFERENCES freelancer(freelancer_id) ON DELETE SET NULL,
     post_time TIMESTAMP DEFAULT NOW()
 );
+
+CREATE TABLE recently_viewed (
+    recently_viewed_id SERIAL PRIMARY KEY,
+    client_id INT REFERENCES client(client_id) ON DELETE SET NULL,
+    freelancer_id INT REFERENCES freelancer(freelancer_id) ON DELETE SET NULL,
+    time_added TIMESTAMP DEFAULT NOW()
+);
