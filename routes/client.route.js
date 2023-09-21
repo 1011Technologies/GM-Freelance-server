@@ -12,7 +12,7 @@ router.get('/get-client-data', validateToken, clientController.getClientData);
 router.get('/get-freelancers',validateToken, clientController.getFreelancers);
 router.get('/get-freelancer/:freelancerId',validateToken, clientController.getFreelancer);
 router.put('/update-client-data', validateToken, clientController.updateClientData);
-router.post('/add-recenlty-viewed', validateToken, clientController.addRecentView);
+router.post('/add-recently-viewed', validateToken, clientController.addRecentView);
 router.get('/get-recently-viewed',validateToken, clientController.getRecent);
 router.get('/get-bookmarked-freelancers',validateToken, clientController.getBookmarkedFreelancers);
 
