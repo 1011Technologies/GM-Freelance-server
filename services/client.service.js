@@ -197,13 +197,18 @@ async function addRecentViews(freelancer_id, user_id) {
 async function getRecentlyViewed(userId) {
     try {
         await pool.query('BEGIN');
-        const result = await pool.query(
-            'SELECT * FROM recently_viewed WHERE client_id=$1',
+        const getclient = await pool.query(
+            'SELECT client_id FROM client  WHERE user_id = $1',
             [userId]
         );
 
+        const result = await pool.query(
+            'SELECT * FROM recently_viewed WHERE client_id=$1',
+            [getclient.rows[0].client_id]
+        );
+
         if (result.rows.length > 0) {
-            const recentlyViewed = result.rows[0];
+            const recentlyViewed = result.rows;
             await pool.query('COMMIT');
             return recentlyViewed;
         }
