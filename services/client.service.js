@@ -153,13 +153,19 @@ async function getBookmarks(user_id) {
 }
 
 // ADD RECENTLY VIEWED FREELANCER ( LIMIT 10 )
-async function addRecentViews(freelancer_id, client_id) {
+async function addRecentViews(freelancer_id, user_id) {
     try {
         await pool.query('BEGIN');
+        const getclient = await pool.query(
+            'SELECT client_id FROM client  WHERE user_id = $1',
+            [user_id]
+        );
+
         const rowCount = await pool.query(
             'SELECT CAST(COUNT(*) AS INTEGER) FROM recently_viewed WHERE client_id = $1',
-            [client_id]
+            [getclient.rows[0].client_id]
         );
+
         const rowCountInt = rowCount.rows[0].count;
         if (rowCountInt >= 5) {
             const deleteQuery = `
@@ -172,11 +178,11 @@ async function addRecentViews(freelancer_id, client_id) {
                 LIMIT 1
             );
             `;
-            await pool.query(deleteQuery, [client_id]);
+            await pool.query(deleteQuery, [getclient.rows[0].client_id]);
         }
         await pool.query(
             'INSERT INTO recently_viewed (client_id, freelancer_id) VALUES($1, $2)',
-            [client_id, freelancer_id]
+            [getclient.rows[0].client_id, freelancer_id]
         );
 
         await pool.query('COMMIT');

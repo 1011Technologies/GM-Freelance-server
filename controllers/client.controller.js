@@ -110,8 +110,8 @@ async function getBookmarks(req, res) {
 async function addRecentView(req, res) {
     try {
         const { freelancer_id } = req.body
-        const client_id = req.user
-        const add = await clientService.addRecentViews(freelancer_id, client_id)
+        const user_id = req.user
+        const add = await clientService.addRecentViews(freelancer_id, user_id)
         res.status(200).json(add)
     } catch (error) {
         console.error(error.message);
