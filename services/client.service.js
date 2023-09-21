@@ -161,32 +161,40 @@ async function addRecentViews(freelancer_id, user_id) {
             [user_id]
         );
 
-        const rowCount = await pool.query(
-            'SELECT CAST(COUNT(*) AS INTEGER) FROM recently_viewed WHERE client_id = $1',
-            [getclient.rows[0].client_id]
-        );
-
-        const rowCountInt = rowCount.rows[0].count;
-        if (rowCountInt >= 5) {
-            const deleteQuery = `
-            DELETE FROM recently_viewed
-            WHERE recently_viewed_id = (
-                SELECT recently_viewed_id
-                FROM recently_viewed
-                WHERE client_id = $1
-                ORDER BY time_added ASC
-                LIMIT 1
-            );
-            `;
-            await pool.query(deleteQuery, [getclient.rows[0].client_id]);
-        }
-        await pool.query(
-            'INSERT INTO recently_viewed (client_id, freelancer_id) VALUES($1, $2)',
+        const freelancerAdded = await pool.query(
+            'SELECT client_id,freelancer_id FROM recently_viewed  WHERE client_id = $1 AND freelancer_id=$2',
             [getclient.rows[0].client_id, freelancer_id]
         );
+        if (!freelancerAdded && freelancerAdded.rows == 0) {
+            const rowCount = await pool.query(
+                'SELECT CAST(COUNT(*) AS INTEGER) FROM recently_viewed WHERE client_id = $1',
+                [getclient.rows[0].client_id]
+            );
 
-        await pool.query('COMMIT');
-        return { message: 'Added in recent' };
+            const rowCountInt = rowCount.rows[0].count;
+            if (rowCountInt >= 5) {
+                const deleteQuery = `
+                         DELETE FROM recently_viewed
+                         WHERE recently_viewed_id = (
+                             SELECT recently_viewed_id
+                             FROM recently_viewed
+                             WHERE client_id = $1
+                             ORDER BY time_added ASC
+                             LIMIT 1
+                         );`
+                await pool.query(deleteQuery, [getclient.rows[0].client_id]);
+            }
+            await pool.query(
+                'INSERT INTO recently_viewed (client_id, freelancer_id) VALUES($1, $2)',
+                [getclient.rows[0].client_id, freelancer_id]
+            );
+
+            await pool.query('COMMIT');
+            return { message: 'Added in recent' };
+        }
+        else {
+            return { message: 'Already in recent' };
+        }
     } catch (error) {
         await pool.query('ROLLBACK');
         throw error;
