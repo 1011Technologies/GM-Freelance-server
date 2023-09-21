@@ -144,6 +144,19 @@ async function getBookmarkedFreelancers(req, res) {
     }
 }
 
+
+// GET FREELANCERS WITH RATING MORE THEN 4.85
+async function getRisingStars(req, res) {
+    try {
+        const userId = req.user;
+        const clientDetails = await clientService.getRisingStars(userId);
+        res.status(200).json(clientDetails);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+}
+
 module.exports = {
     updateClientData,
     getClientData,
@@ -155,7 +168,8 @@ module.exports = {
     getBookmarks,
     getBookmarkedFreelancers,
     addRecentView,
-    getRecent
+    getRecent,
+    getRisingStars
 }
 
 

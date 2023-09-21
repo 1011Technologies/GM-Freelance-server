@@ -15,6 +15,7 @@ router.put('/update-client-data', validateToken, clientController.updateClientDa
 router.post('/add-recently-viewed', validateToken, clientController.addRecentView);
 router.get('/get-recently-viewed',validateToken, clientController.getRecent);
 router.get('/get-bookmarked-freelancers',validateToken, clientController.getBookmarkedFreelancers);
+router.get('/get-rising-stars',validateToken, clientController.getRisingStars);
 
 
 module.exports = router

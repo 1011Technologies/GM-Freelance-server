@@ -262,6 +262,27 @@ async function getBookmarkedFreelancers(user_id) {
     }
 }
 
+
+// GET FREELANCERS WITH RATING MORE THEN 4.85
+async function getRisingStars(userId) {
+    try {
+        await pool.query('BEGIN');
+        const risingStars = await pool.query(
+            `SELECT users.first_name,users.last_name,users.profile_picture,users.geom ,users.is_verified ,freelancer.freelancer_id ,freelancer.rating,freelancer.reviews_count,freelancer.response_rate,freelancer.response_time ,freelancer.days_available,freelancer.hourly_rate FROM freelancer
+            inner join users on users.user_id =freelancer.user_id 
+            WHERE freelancer.rating >= 4.85`,
+        );
+        if (risingStars.rows.length > 0) {
+            const allStars = risingStars.rows;
+            await pool.query('COMMIT');
+            return allStars;
+        }
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        throw error;
+    }
+}
+
 module.exports = {
     updateClientData,
     getClientData,
@@ -274,5 +295,6 @@ module.exports = {
     getBookmarkedFreelancers,
     getRecentlyViewed,
     getBookmarkedFreelancers,
-    addRecentViews
+    addRecentViews,
+    getRisingStars
 };
