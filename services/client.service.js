@@ -211,7 +211,11 @@ async function getRecentlyViewed(userId) {
         );
 
         const result = await pool.query(
-            'SELECT * FROM recently_viewed WHERE client_id=$1',
+            `SELECT users.first_name,users.last_name,users.profile_picture,users.geom ,users.is_verified ,freelancer.freelancer_id ,freelancer.rating,freelancer.reviews_count,freelancer.response_rate,freelancer.response_time ,freelancer.days_available,freelancer.hourly_rate  
+            FROM recently_viewed 
+            inner join freelancer on freelancer.freelancer_id=recently_viewed.freelancer_id
+            inner join users  on freelancer.user_id =users.user_id 
+            WHERE recently_viewed.client_id=$1`,
             [getclient.rows[0].client_id]
         );
 
