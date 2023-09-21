@@ -264,7 +264,7 @@ async function getBookmarkedFreelancers(user_id) {
 
 
 // GET FREELANCERS WITH RATING MORE THEN 4.85
-async function getRisingStars(userId) {
+async function getRisingStars() {
     try {
         await pool.query('BEGIN');
         const risingStars = await pool.query(
