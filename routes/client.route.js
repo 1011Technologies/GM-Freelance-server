@@ -16,6 +16,7 @@ router.post('/add-recently-viewed', validateToken, clientController.addRecentVie
 router.get('/get-recently-viewed',validateToken, clientController.getRecent);
 router.get('/get-bookmarked-freelancers',validateToken, clientController.getBookmarkedFreelancers);
 router.get('/get-rising-stars',validateToken, clientController.getRisingStars);
+router.get('/get-your-hires',validateToken, clientController.getYourHires);
 
 
 module.exports = router

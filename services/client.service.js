@@ -283,6 +283,34 @@ async function getRisingStars() {
     }
 }
 
+// GET FREELANCERS THAT CLIENT HIRED
+async function getYourHires(userId) {
+    try {
+        await pool.query('BEGIN');
+        const getclient = await pool.query(
+            'SELECT client_id FROM client WHERE user_id = $1',
+            [userId]
+        );
+        const getAllHires = await pool.query(
+            `SELECT users.first_name, users.last_name, users.profile_picture, users.geom, users.is_verified, freelancer.freelancer_id, freelancer.rating, freelancer.reviews_count, freelancer.response_rate, freelancer.response_time, freelancer.days_available, freelancer.hourly_rate 
+            FROM freelancer
+            INNER JOIN users ON users.user_id = freelancer.user_id
+            INNER JOIN project ON project.freelancer_id = freelancer.freelancer_id
+            WHERE project.client_id = $1;`,
+            [getclient.rows[0].client_id],
+        );
+        if (getAllHires.rows.length > 0) {
+            const allHires = getAllHires.rows;
+            await pool.query('COMMIT');
+            return allHires;
+        }
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        throw error;
+    }
+}
+
+
 module.exports = {
     updateClientData,
     getClientData,
@@ -296,5 +324,6 @@ module.exports = {
     getRecentlyViewed,
     getBookmarkedFreelancers,
     addRecentViews,
-    getRisingStars
+    getRisingStars,
+    getYourHires
 };
