@@ -27,7 +27,6 @@ async function login(email, password) {
         throw err;
     }
 }
-
 async function checkPassword(plainPassword, hashedPassword) {
     const match = await bcrypt.compare(plainPassword, hashedPassword);
     return match;
@@ -75,6 +74,12 @@ async function register(userDetail) {
                     `INSERT INTO freelancer (user_id) VALUES ($1) RETURNING *;`,
                     [
                         newUser.rows[0].user_id,
+                    ]
+                );
+                certification = await pool.query(
+                    `INSERT INTO certification (freelancer_id) VALUES ($1) RETURNING *;`,
+                    [
+                        newEntity.rows[0].freelancer_id,
                     ]
                 );
             }

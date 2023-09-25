@@ -218,6 +218,28 @@ async function updateData(userId, freelancerDetails) {
         throw error;
     }
 }
+
+// ADD CERTIFICATION OF FREELANCER
+async function addCertificate(userId, certified_in, certification_link) {
+    try {
+        await pool.query('BEGIN');
+        const result = await pool.query(
+            'SELECT freelancer_id FROM freelancer WHERE user_id=$1',
+            [userId]
+        );
+        await pool.query(
+            "UPDATE certification SET certified_in=$2, certification_link=$3 where freelancer_id=$1",
+            [result.rows[0].freelancer_id, certified_in, certification_link]
+        );
+
+        await pool.query('COMMIT');
+        return { success: true, message: 'Certification updated successfully.' };
+
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        throw error;
+    }
+}
 module.exports = {
     getFreelancerDataByUserId,
     submitProposal,
@@ -228,5 +250,6 @@ module.exports = {
     getAppliedJobsByUserId,
     getProposalsByUserId,
     getProposalByJobId,
-    updateData
+    updateData,
+    addCertificate
 };
