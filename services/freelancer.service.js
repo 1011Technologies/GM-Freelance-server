@@ -7,6 +7,7 @@ async function getFreelancerDataByUserId(userId) {
         const result = await pool.query(
             `SELECT * FROM freelancer 
             Inner join certification on freelancer.freelancer_id = certification.freelancer_id 
+            Inner join skill on skill.freelancer_id = certification.freelancer_id 
             WHERE freelancer.user_id=$1`,
             [userId]
         );
@@ -209,7 +210,7 @@ async function updateData(userId, freelancerDetails) {
         await pool.query('BEGIN');
         await pool.query(
             "UPDATE freelancer SET days_available=$2, hourly_rate=$3, title=$4, overview=$5 WHERE user_id = $1",
-            [userId, freelancerDetails.days_available, freelancerDetails.hourly_rate,freelancerDetails.title,freelancerDetails.overview]
+            [userId, freelancerDetails.days_available, freelancerDetails.hourly_rate, freelancerDetails.title, freelancerDetails.overview]
         );
 
         await pool.query('COMMIT');
@@ -222,7 +223,7 @@ async function updateData(userId, freelancerDetails) {
 }
 
 // ADD CERTIFICATION OF FREELANCER
-async function addCertificate(userId, certified_in, certification_link) {
+async function addCertificate(userId, certified_in, certification_link, provider) {
     try {
         await pool.query('BEGIN');
         const result = await pool.query(
@@ -230,12 +231,34 @@ async function addCertificate(userId, certified_in, certification_link) {
             [userId]
         );
         await pool.query(
-            "UPDATE certification SET certified_in=$2, certification_link=$3 where freelancer_id=$1",
-            [result.rows[0].freelancer_id, certified_in, certification_link]
+            "UPDATE certification SET certified_in=$2, certification_link=$3, provider=$4 where freelancer_id=$1",
+            [result.rows[0].freelancer_id, certified_in, certification_link, provider]
         );
 
         await pool.query('COMMIT');
         return { success: true, message: 'Certification updated successfully.' };
+
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        throw error;
+    }
+}
+
+// ADD SKILL OF FREELANCER
+async function addSkill(userId, skill_1, skill_2, skill_3, skill_4, skill_5) {
+    try {
+        await pool.query('BEGIN');
+        const result = await pool.query(
+            'SELECT freelancer_id FROM freelancer WHERE user_id=$1',
+            [userId]
+        );
+        await pool.query(
+            `INSERT INTO skill ( freelancer_id, skill_1, skill_2, skill_3, skill_4, skill_5 ) VALUES ($1, $2, $3, $4, $5, $6)`,
+            [result.rows[0].freelancer_id, skill_1, skill_2, skill_3, skill_4, skill_5]
+        );
+
+        await pool.query('COMMIT');
+        return { success: true, message: 'All skills added.' };
 
     } catch (error) {
         await pool.query('ROLLBACK');
@@ -253,5 +276,6 @@ module.exports = {
     getProposalsByUserId,
     getProposalByJobId,
     updateData,
-    addCertificate
+    addCertificate,
+    addSkill
 };

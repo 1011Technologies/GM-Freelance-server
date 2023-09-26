@@ -233,8 +233,6 @@ async function getRecentlyViewed(userId) {
     }
 }
 
-
-
 // GET ALL THE FREELANCERS THAT ARE BOOKMARKED
 async function getBookmarkedFreelancers(user_id) {
     try {
@@ -264,7 +262,6 @@ async function getBookmarkedFreelancers(user_id) {
         throw error;
     }
 }
-
 
 // GET FREELANCERS WITH RATING MORE THEN 4.85
 async function getRisingStars() {
@@ -312,7 +309,6 @@ async function getYourHires(userId) {
         throw error;
     }
 }
-
 
 module.exports = {
     updateClientData,

@@ -157,6 +157,15 @@ CREATE TABLE recently_viewed (
     time_added TIMESTAMP DEFAULT NOW()
 );
 
+CREATE TABLE skill(
+    skill_id SERIAL PRIMARY KEY,
+    freelancer_id INT REFERENCES freelancer(freelancer_id) ON DELETE SET NULL,
+    skill_1 VARCHAR(25),
+    skill_2 VARCHAR(25),
+    skill_3 VARCHAR(25),
+    skill_4 VARCHAR(25),
+    skill_5 VARCHAR(25)
+);
 
 
 
