@@ -5,10 +5,10 @@ async function getFreelancerDataByUserId(userId) {
     try {
         await pool.query('BEGIN');
         const result = await pool.query(
-            `SELECT * FROM freelancer 
-            Inner join certification on freelancer.freelancer_id = certification.freelancer_id 
-            Inner join skill on skill.freelancer_id = certification.freelancer_id 
-            WHERE freelancer.user_id=$1`,
+            `SELECT * FROM freelancer
+            inner join certification on freelancer.freelancer_id = certification.freelancer_id
+            left join skill on skill.freelancer_id = certification.freelancer_id 
+            WHERE freelancer.user_id =$1`,
             [userId]
         );
         if (result.rows.length > 0) {

@@ -82,6 +82,12 @@ async function register(userDetail) {
                         newEntity.rows[0].freelancer_id,
                     ]
                 );
+                skill = await pool.query(
+                    `INSERT INTO skill (freelancer_id) VALUES ($1) RETURNING *;`,
+                    [
+                        newEntity.rows[0].freelancer_id,
+                    ]
+                );
             }
 
             const token = generateToken(newUser.rows[0].user_id);
