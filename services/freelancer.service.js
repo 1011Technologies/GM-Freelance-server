@@ -265,6 +265,7 @@ async function addSkill(userId, skill_1, skill_2, skill_3, skill_4, skill_5) {
         throw error;
     }
 }
+
 module.exports = {
     getFreelancerDataByUserId,
     submitProposal,
