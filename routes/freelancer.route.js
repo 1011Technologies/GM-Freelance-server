@@ -29,8 +29,8 @@ router.get('/get-applied-jobs',validateToken, freelancerController.getAppliedJob
 router.get('/get-proposals',validateToken, freelancerController.getProposals);
 router.get('/get-proposal/:jobId',validateToken, freelancerController.getProposal);
 router.put('/update-freelancer-data',validateToken, freelancerController.updateData);
-router.put('/add-certification',validateToken, freelancerController.addCertificate);
-router.post('/update-skills',validateToken, freelancerController.addSkill);
+router.put('/update-certification',validateToken, freelancerController.addCertificate);
+router.post('/add-skills',validateToken, freelancerController.addSkill);
 
 
 
