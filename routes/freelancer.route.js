@@ -30,7 +30,7 @@ router.get('/get-proposals',validateToken, freelancerController.getProposals);
 router.get('/get-proposal/:jobId',validateToken, freelancerController.getProposal);
 router.put('/update-freelancer-data',validateToken, freelancerController.updateData);
 router.put('/update-certification',validateToken, freelancerController.addCertificate);
-router.post('/add-skills',validateToken, freelancerController.addSkill);
+router.put('/update-skills',validateToken, freelancerController.addSkill);
 
 
 

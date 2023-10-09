@@ -152,24 +152,24 @@ async function getAppliedJobsByUserId(userId) {
 
 // GET ALL PROPOSALS BY USER ID
 async function getProposalsByUserId(userId) {
-    try {
-        const freelancerDetails = await pool.query(
-            'SELECT freelancer_id FROM freelancer WHERE user_id = $1',
-            [userId]
-        );
+  try {
+      const freelancerDetails = await pool.query(
+          'SELECT freelancer_id FROM freelancer WHERE user_id = $1',
+          [userId]
+      );
 
-        if (freelancerDetails.rows.length === 0) {
-            return { message: 'User is not a freelancer' };
-        }
+      if (freelancerDetails.rows.length === 0) {
+          return { message: 'User is not a freelancer' };
+      }
 
-        const freelancerId = freelancerDetails.rows[0].freelancer_id;
+      const freelancerId = freelancerDetails.rows[0].freelancer_id;
 
-        const result = await pool.query(
-            'SELECT * FROM proposal WHERE freelancer_id = $1',
-            [freelancerId]
-        );
+      const result = await pool.query(
+          'SELECT * FROM proposal WHERE freelancer_id = $1',
+          [freelancerId]
+      );
 
-        const proposals = result.rows;
+      const proposals = result.rows;
 
         if (proposals.length > 0) {
             return proposals;
@@ -253,12 +253,12 @@ async function addSkill(userId, skill_1, skill_2, skill_3, skill_4, skill_5) {
             [userId]
         );
         await pool.query(
-            `INSERT INTO skill ( freelancer_id, skill_1, skill_2, skill_3, skill_4, skill_5 ) VALUES ($1, $2, $3, $4, $5, $6)`,
-            [result.rows[0].freelancer_id, skill_1, skill_2, skill_3, skill_4, skill_5]
+          `UPDATE skill SET skill_1=$2, skill_2=$3, skill_3=$4, skill_4=$5, skill_5=$6 where freelancer_id=$1`,
+          [result.rows[0].freelancer_id, skill_1, skill_2, skill_3, skill_4, skill_5]
         );
 
         await pool.query('COMMIT');
-        return { success: true, message: 'All skills added.' };
+        return { success: true, message: 'Skills updated successfully.' };
 
     } catch (error) {
         await pool.query('ROLLBACK');
