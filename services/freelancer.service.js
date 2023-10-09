@@ -5,7 +5,10 @@ async function getFreelancerDataByUserId(userId) {
     try {
         await pool.query('BEGIN');
         const result = await pool.query(
-            'SELECT * FROM freelancer WHERE user_id=$1',
+            `SELECT * FROM freelancer
+            inner join certification on freelancer.freelancer_id = certification.freelancer_id
+            left join skill on skill.freelancer_id = certification.freelancer_id 
+            WHERE freelancer.user_id =$1`,
             [userId]
         );
         if (result.rows.length > 0) {
@@ -149,24 +152,24 @@ async function getAppliedJobsByUserId(userId) {
 
 // GET ALL PROPOSALS BY USER ID
 async function getProposalsByUserId(userId) {
-    try {
-        const freelancerDetails = await pool.query(
-            'SELECT freelancer_id FROM freelancer WHERE user_id = $1',
-            [userId]
-        );
+  try {
+      const freelancerDetails = await pool.query(
+          'SELECT freelancer_id FROM freelancer WHERE user_id = $1',
+          [userId]
+      );
 
-        if (freelancerDetails.rows.length === 0) {
-            return { message: 'User is not a freelancer' };
-        }
+      if (freelancerDetails.rows.length === 0) {
+          return { message: 'User is not a freelancer' };
+      }
 
-        const freelancerId = freelancerDetails.rows[0].freelancer_id;
+      const freelancerId = freelancerDetails.rows[0].freelancer_id;
 
-        const result = await pool.query(
-            'SELECT * FROM proposal WHERE freelancer_id = $1',
-            [freelancerId]
-        );
+      const result = await pool.query(
+          'SELECT * FROM proposal WHERE freelancer_id = $1',
+          [freelancerId]
+      );
 
-        const proposals = result.rows;
+      const proposals = result.rows;
 
         if (proposals.length > 0) {
             return proposals;
@@ -207,7 +210,7 @@ async function updateData(userId, freelancerDetails) {
         await pool.query('BEGIN');
         await pool.query(
             "UPDATE freelancer SET days_available=$2, hourly_rate=$3, title=$4, overview=$5 WHERE user_id = $1",
-            [userId, freelancerDetails.days_available, freelancerDetails.hourly_rate,freelancerDetails.title,freelancerDetails.overview]
+            [userId, freelancerDetails.days_available, freelancerDetails.hourly_rate, freelancerDetails.title, freelancerDetails.overview]
         );
 
         await pool.query('COMMIT');
@@ -218,6 +221,51 @@ async function updateData(userId, freelancerDetails) {
         throw error;
     }
 }
+
+// ADD CERTIFICATION OF FREELANCER
+async function addCertificate(userId, certified_in, certification_link, provider) {
+    try {
+        await pool.query('BEGIN');
+        const result = await pool.query(
+            'SELECT freelancer_id FROM freelancer WHERE user_id=$1',
+            [userId]
+        );
+        await pool.query(
+            "UPDATE certification SET certified_in=$2, certification_link=$3, provider=$4 where freelancer_id=$1",
+            [result.rows[0].freelancer_id, certified_in, certification_link, provider]
+        );
+
+        await pool.query('COMMIT');
+        return { success: true, message: 'Certification updated successfully.' };
+
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        throw error;
+    }
+}
+
+// ADD SKILL OF FREELANCER
+async function addSkill(userId, skill_1, skill_2, skill_3, skill_4, skill_5) {
+    try {
+        await pool.query('BEGIN');
+        const result = await pool.query(
+            'SELECT freelancer_id FROM freelancer WHERE user_id=$1',
+            [userId]
+        );
+        await pool.query(
+          `UPDATE skill SET skill_1=$2, skill_2=$3, skill_3=$4, skill_4=$5, skill_5=$6 where freelancer_id=$1`,
+          [result.rows[0].freelancer_id, skill_1, skill_2, skill_3, skill_4, skill_5]
+        );
+
+        await pool.query('COMMIT');
+        return { success: true, message: 'Skills updated successfully.' };
+
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        throw error;
+    }
+}
+
 module.exports = {
     getFreelancerDataByUserId,
     submitProposal,
@@ -228,5 +276,7 @@ module.exports = {
     getAppliedJobsByUserId,
     getProposalsByUserId,
     getProposalByJobId,
-    updateData
+    updateData,
+    addCertificate,
+    addSkill
 };

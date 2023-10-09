@@ -157,6 +157,38 @@ async function updateData(req, res) {
         res.status(500).json({ error: "Server error" });
     }
 }
+
+// ADD CERTIFICATION OF FREELANCER
+async function addCertificate(req, res) {
+    try {
+        const { certified_in, certification_link, provider } = req.body;
+        const userId = req.user;
+
+        const result = await freelancerService.addCertificate(userId, certified_in, certification_link, provider);
+        res.status(200).json(result);
+
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: "Server error" });
+    }
+}
+
+// ADD SKILL OF FREELANCER
+async function addSkill(req, res) {
+    try {
+        const { skill_1, skill_2, skill_3, skill_4, skill_5 } = req.body;
+        const userId = req.user;
+
+        const result = await freelancerService.addSkill(userId, skill_1, skill_2, skill_3, skill_4, skill_5);
+        res.status(200).json(result);
+
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: "Server error" });
+    }
+}
+
+
 module.exports = {
     getFreelancerData,
     submitProposal,
@@ -168,5 +200,7 @@ module.exports = {
     getAppliedJobs,
     getProposals,
     getProposal,
-    updateData
+    updateData,
+    addCertificate,
+    addSkill
 }

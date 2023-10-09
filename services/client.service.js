@@ -82,7 +82,11 @@ async function getFreelancerById(freelancerId) {
     try {
         await pool.query('BEGIN');
         const result = await pool.query(
-            'SELECT * FROM users  inner join freelancer on users.user_id = freelancer.user_id WHERE freelancer_id=$1',
+            `SELECT * FROM users  
+            inner join freelancer on users.user_id = freelancer.user_id
+            left join certification on freelancer.freelancer_id = certification.freelancer_id
+            left join skill on certification.freelancer_id = skill.freelancer_id
+            WHERE freelancer.freelancer_id=$1`,
             [freelancerId]
         );
         if (result.rows.length > 0) {
@@ -161,32 +165,40 @@ async function addRecentViews(freelancer_id, user_id) {
             [user_id]
         );
 
-        const rowCount = await pool.query(
-            'SELECT CAST(COUNT(*) AS INTEGER) FROM recently_viewed WHERE client_id = $1',
-            [getclient.rows[0].client_id]
-        );
-
-        const rowCountInt = rowCount.rows[0].count;
-        if (rowCountInt >= 5) {
-            const deleteQuery = `
-            DELETE FROM recently_viewed
-            WHERE recently_viewed_id = (
-                SELECT recently_viewed_id
-                FROM recently_viewed
-                WHERE client_id = $1
-                ORDER BY time_added ASC
-                LIMIT 1
-            );
-            `;
-            await pool.query(deleteQuery, [getclient.rows[0].client_id]);
-        }
-        await pool.query(
-            'INSERT INTO recently_viewed (client_id, freelancer_id) VALUES($1, $2)',
+        const freelancerAdded = await pool.query(
+            'SELECT client_id,freelancer_id FROM recently_viewed  WHERE client_id = $1 AND freelancer_id=$2',
             [getclient.rows[0].client_id, freelancer_id]
         );
+        if (!freelancerAdded && freelancerAdded.rows == 0) {
+            const rowCount = await pool.query(
+                'SELECT CAST(COUNT(*) AS INTEGER) FROM recently_viewed WHERE client_id = $1',
+                [getclient.rows[0].client_id]
+            );
 
-        await pool.query('COMMIT');
-        return { message: 'Added in recent' };
+            const rowCountInt = rowCount.rows[0].count;
+            if (rowCountInt >= 5) {
+                const deleteQuery = `
+                         DELETE FROM recently_viewed
+                         WHERE recently_viewed_id = (
+                             SELECT recently_viewed_id
+                             FROM recently_viewed
+                             WHERE client_id = $1
+                             ORDER BY time_added ASC
+                             LIMIT 1
+                         );`
+                await pool.query(deleteQuery, [getclient.rows[0].client_id]);
+            }
+            await pool.query(
+                'INSERT INTO recently_viewed (client_id, freelancer_id) VALUES($1, $2)',
+                [getclient.rows[0].client_id, freelancer_id]
+            );
+
+            await pool.query('COMMIT');
+            return { message: 'Added in recent' };
+        }
+        else {
+            return { message: 'Already in recent' };
+        }
     } catch (error) {
         await pool.query('ROLLBACK');
         throw error;
@@ -203,7 +215,11 @@ async function getRecentlyViewed(userId) {
         );
 
         const result = await pool.query(
-            'SELECT * FROM recently_viewed WHERE client_id=$1',
+            `SELECT users.first_name,users.last_name,users.profile_picture,users.geom ,users.is_verified ,freelancer.freelancer_id ,freelancer.rating,freelancer.reviews_count,freelancer.response_rate,freelancer.response_time ,freelancer.days_available,freelancer.hourly_rate  
+            FROM recently_viewed 
+            inner join freelancer on freelancer.freelancer_id=recently_viewed.freelancer_id
+            inner join users  on freelancer.user_id =users.user_id 
+            WHERE recently_viewed.client_id=$1`,
             [getclient.rows[0].client_id]
         );
 
@@ -217,8 +233,6 @@ async function getRecentlyViewed(userId) {
         throw error;
     }
 }
-
-
 
 // GET ALL THE FREELANCERS THAT ARE BOOKMARKED
 async function getBookmarkedFreelancers(user_id) {
@@ -249,6 +263,177 @@ async function getBookmarkedFreelancers(user_id) {
         throw error;
     }
 }
+<<<<<<< HEAD
+=======
+
+// GET FREELANCERS WITH RATING MORE THEN 4.85
+async function getRisingStars() {
+    try {
+        await pool.query('BEGIN');
+        const risingStars = await pool.query(
+            `SELECT users.first_name,users.last_name,users.profile_picture,users.geom ,users.is_verified ,freelancer.freelancer_id ,freelancer.rating,freelancer.reviews_count,freelancer.response_rate,freelancer.response_time ,freelancer.days_available,freelancer.hourly_rate FROM freelancer
+            inner join users on users.user_id =freelancer.user_id 
+            WHERE freelancer.rating >= 4.85`,
+        );
+        if (risingStars.rows.length > 0) {
+            const allStars = risingStars.rows;
+            await pool.query('COMMIT');
+            return allStars;
+        }
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        throw error;
+    }
+}
+
+// GET FREELANCERS THAT CLIENT HIRED
+async function getYourHires(userId) {
+    try {
+        await pool.query('BEGIN');
+        const getclient = await pool.query(
+            'SELECT client_id FROM client WHERE user_id = $1',
+            [userId]
+        );
+        const getAllHires = await pool.query(
+            `SELECT users.first_name, users.last_name, users.profile_picture, users.geom, users.is_verified, freelancer.freelancer_id, freelancer.rating, freelancer.reviews_count, freelancer.response_rate, freelancer.response_time, freelancer.days_available, freelancer.hourly_rate 
+            FROM freelancer
+            INNER JOIN users ON users.user_id = freelancer.user_id
+            INNER JOIN project ON project.freelancer_id = freelancer.freelancer_id
+            WHERE project.client_id = $1;`,
+            [getclient.rows[0].client_id],
+        );
+        if (getAllHires.rows.length > 0) {
+            const allHires = getAllHires.rows;
+            await pool.query('COMMIT');
+            return allHires;
+        }
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        throw error;
+    }
+}
+
+// GET ALL JOBS POSTED BY CLIENT
+async function getMyJobs(userId) {
+    try {
+        await pool.query('BEGIN');
+        const getclient = await pool.query(
+            'SELECT client_id FROM client WHERE user_id = $1',
+            [userId]
+        );
+        const getAllJobs = await pool.query(
+            `SELECT * FROM job
+            WHERE job.client_id = $1;`,
+            [getclient.rows[0].client_id],
+        );
+        if (getAllJobs.rows.length > 0) {
+            const allJobs = getAllJobs.rows;
+            await pool.query('COMMIT');
+            return allJobs;
+        }
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        throw error;
+    }
+}
+
+// GET JOB BY ID
+async function getJob(jobId) {
+    try {
+        await pool.query('BEGIN');
+        const getJob = await pool.query(
+            `SELECT * FROM job
+            WHERE job.job_id = $1;`,
+            [jobId],
+        );
+        if (getJob.rows.length > 0) {
+            const job = getJob.rows[0];
+            await pool.query('COMMIT');
+            return job;
+        }
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        throw error;
+    }
+}
+
+// GET ALL PROPOSALS FOR A JOB
+async function getJobProposals(jobId) {
+    try {
+        await pool.query('BEGIN');
+        const getAllProposals = await pool.query(
+            `SELECT * FROM proposal
+            WHERE proposal.job_id = $1;`,
+            [jobId],
+        );
+        if (getAllProposals.rows.length > 0) {
+            const allProposals = getAllProposals.rows;
+            await pool.query('COMMIT');
+            return allProposals;
+        }
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        throw error;
+    }
+}
+
+// GET A PROPOSAL BY ID
+async function getProposal(proposalId) {
+    try {
+        await pool.query('BEGIN');
+        const getProposal = await pool.query(
+            `SELECT * FROM proposal
+            WHERE proposal.proposal_id = $1;`,
+            [proposalId],
+        );
+        if (getProposal.rows.length > 0) {
+            const proposal = getProposal.rows[0];
+            await pool.query('COMMIT');
+            return proposal;
+        }
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        throw error;
+    }
+}
+
+// Accept a proposal
+async function acceptProposal(proposalId) {
+    try {
+        await pool.query('BEGIN');
+        const acceptProposal = await pool.query(
+            `UPDATE proposal
+            SET proposal_status = 'accepted'
+            WHERE proposal.proposal_id = $1;`,
+            [proposalId],
+        );
+        await pool.query('COMMIT');
+        return { message: 'Proposal accepted successfully' };
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        throw error;
+    }
+}
+
+// Reject a proposal
+async function rejectProposal(proposalId) {
+    try {
+        await pool.query('BEGIN');
+        const rejectProposal = await pool.query(
+            `UPDATE proposal
+            SET proposal_status = 'rejected'
+            WHERE proposal.proposal_id = $1;`,
+            [proposalId],
+        );
+        await pool.query('COMMIT');
+        return { message: 'Proposal rejected successfully' };
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        throw error;
+    }
+}
+
+>>>>>>> ff391415a98f6a2b8c16eb8513cbfa86e0c47ab8
 module.exports = {
     updateClientData,
     getClientData,
@@ -259,6 +444,19 @@ module.exports = {
     deleteBookmark,
     getBookmarks,
     getRecentlyViewed,
+<<<<<<< HEAD
     addRecentViews,
     getBookmarkedFreelancers
+=======
+    getBookmarkedFreelancers,
+    addRecentViews,
+    getRisingStars,
+    getYourHires,
+    getMyJobs,
+    getJob,
+    getJobProposals,
+    getProposal,
+    acceptProposal,
+    rejectProposal
+>>>>>>> ff391415a98f6a2b8c16eb8513cbfa86e0c47ab8
 };
