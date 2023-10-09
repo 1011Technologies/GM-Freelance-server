@@ -17,6 +17,12 @@ router.get('/get-recently-viewed',validateToken, clientController.getRecent);
 router.get('/get-bookmarked-freelancers',validateToken, clientController.getBookmarkedFreelancers);
 router.get('/get-rising-stars',validateToken, clientController.getRisingStars);
 router.get('/get-your-hires',validateToken, clientController.getYourHires);
+router.get('/get-jobs',validateToken, clientController.getMyJobs);
+router.get('/get-job/:jobId',validateToken, clientController.getJob);
+router.get('/get-job-proposals/:jobId',validateToken, clientController.getJobProposals);
+router.get('/get-proposal/:proposalId',validateToken, clientController.getProposal);
+router.put('/accept-proposal',validateToken, clientController.acceptProposal);
+router.put('/reject-proposal',validateToken, clientController.rejectProposal);
 
 
 module.exports = router

@@ -84,7 +84,8 @@ async function getFreelancerById(freelancerId) {
         const result = await pool.query(
             `SELECT * FROM users  
             inner join freelancer on users.user_id = freelancer.user_id
-            inner join certification on freelancer.freelancer_id = certification.freelancer_id 
+            left join certification on freelancer.freelancer_id = certification.freelancer_id
+            left join skill on certification.freelancer_id = skill.freelancer_id
             WHERE freelancer.freelancer_id=$1`,
             [freelancerId]
         );
@@ -310,6 +311,126 @@ async function getYourHires(userId) {
     }
 }
 
+// GET ALL JOBS POSTED BY CLIENT
+async function getMyJobs(userId) {
+    try {
+        await pool.query('BEGIN');
+        const getclient = await pool.query(
+            'SELECT client_id FROM client WHERE user_id = $1',
+            [userId]
+        );
+        const getAllJobs = await pool.query(
+            `SELECT * FROM job
+            WHERE job.client_id = $1;`,
+            [getclient.rows[0].client_id],
+        );
+        if (getAllJobs.rows.length > 0) {
+            const allJobs = getAllJobs.rows;
+            await pool.query('COMMIT');
+            return allJobs;
+        }
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        throw error;
+    }
+}
+
+// GET JOB BY ID
+async function getJob(jobId) {
+    try {
+        await pool.query('BEGIN');
+        const getJob = await pool.query(
+            `SELECT * FROM job
+            WHERE job.job_id = $1;`,
+            [jobId],
+        );
+        if (getJob.rows.length > 0) {
+            const job = getJob.rows[0];
+            await pool.query('COMMIT');
+            return job;
+        }
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        throw error;
+    }
+}
+
+// GET ALL PROPOSALS FOR A JOB
+async function getJobProposals(jobId) {
+    try {
+        await pool.query('BEGIN');
+        const getAllProposals = await pool.query(
+            `SELECT * FROM proposal
+            WHERE proposal.job_id = $1;`,
+            [jobId],
+        );
+        if (getAllProposals.rows.length > 0) {
+            const allProposals = getAllProposals.rows;
+            await pool.query('COMMIT');
+            return allProposals;
+        }
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        throw error;
+    }
+}
+
+// GET A PROPOSAL BY ID
+async function getProposal(proposalId) {
+    try {
+        await pool.query('BEGIN');
+        const getProposal = await pool.query(
+            `SELECT * FROM proposal
+            WHERE proposal.proposal_id = $1;`,
+            [proposalId],
+        );
+        if (getProposal.rows.length > 0) {
+            const proposal = getProposal.rows[0];
+            await pool.query('COMMIT');
+            return proposal;
+        }
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        throw error;
+    }
+}
+
+// Accept a proposal
+async function acceptProposal(proposalId) {
+    try {
+        await pool.query('BEGIN');
+        const acceptProposal = await pool.query(
+            `UPDATE proposal
+            SET proposal_status = 'accepted'
+            WHERE proposal.proposal_id = $1;`,
+            [proposalId],
+        );
+        await pool.query('COMMIT');
+        return { message: 'Proposal accepted successfully' };
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        throw error;
+    }
+}
+
+// Reject a proposal
+async function rejectProposal(proposalId) {
+    try {
+        await pool.query('BEGIN');
+        const rejectProposal = await pool.query(
+            `UPDATE proposal
+            SET proposal_status = 'rejected'
+            WHERE proposal.proposal_id = $1;`,
+            [proposalId],
+        );
+        await pool.query('COMMIT');
+        return { message: 'Proposal rejected successfully' };
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        throw error;
+    }
+}
+
 module.exports = {
     updateClientData,
     getClientData,
@@ -324,5 +445,11 @@ module.exports = {
     getBookmarkedFreelancers,
     addRecentViews,
     getRisingStars,
-    getYourHires
+    getYourHires,
+    getMyJobs,
+    getJob,
+    getJobProposals,
+    getProposal,
+    acceptProposal,
+    rejectProposal
 };

@@ -168,6 +168,78 @@ async function getYourHires(req, res) {
     }
 }
 
+// GET ALL THE JOBS THAT CLIENT POSTED
+async function getMyJobs(req, res) {
+    try {
+        const userId = req.user;
+        const clientDetails = await clientService.getMyJobs(userId);
+        res.status(200).json(clientDetails);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+}
+
+// GET A JOB BY ID
+async function getJob(req, res) {
+    try {
+        const jobId = req.params.jobId;
+        const job = await clientService.getJob(jobId);
+        res.status(200).json(job);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+}
+
+// GET ALL THE PROPOSALS FOR A JOB
+async function getJobProposals(req, res) {
+    try {
+        const jobId = req.params.jobId;
+        const jobProposals = await clientService.getJobProposals(jobId);
+        res.status(200).json(jobProposals);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+}
+
+// GET A PROPOSAL BY ID
+async function getProposal(req, res) {
+    try {
+        const proposalId = req.params.proposalId;
+        const proposal = await clientService.getProposal(proposalId);
+        res.status(200).json(proposal);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+}
+
+// Accept a proposal
+async function acceptProposal(req, res) {
+    try {
+        const { proposalId } = req.body;
+        const proposal = await clientService.acceptProposal(proposalId);
+        res.status(200).json(proposal);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+}
+
+// Reject a proposal
+async function rejectProposal(req, res) {
+    try {
+        const { proposalId } = req.body;
+        const proposal = await clientService.rejectProposal(proposalId);
+        res.status(200).json(proposal);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+}
+
 module.exports = {
     updateClientData,
     getClientData,
@@ -181,7 +253,13 @@ module.exports = {
     addRecentView,
     getRecent,
     getRisingStars,
-    getYourHires
+    getYourHires,
+    getMyJobs,
+    getJob,
+    getJobProposals,
+    getProposal,
+    acceptProposal,
+    rejectProposal
 }
 
 
