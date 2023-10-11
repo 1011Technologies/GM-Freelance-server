@@ -74,11 +74,14 @@ CREATE TABLE contract (
 -- MESSAGE TABLE
 CREATE TABLE message (
     message_id SERIAL PRIMARY KEY,
-    freelancer_id INT REFERENCES freelancer(freelancer_id) ON DELETE SET NULL,
-    client_id INT REFERENCES client(client_id) ON DELETE SET NULL,
-    proposal_id INT REFERENCES proposal(proposal_id) ON DELETE SET NULL,
+    receiver_id INT,
+    sender_id INT,
     message_text VARCHAR(1000),
-    message_time TIMESTAMP DEFAULT NOW()
+    message_time TIMESTAMP,
+    chat_room_id INT,
+    FOREIGN KEY (chat_room_id) REFERENCES chat_room(chat_room_id),
+    FOREIGN KEY (receiver_id) REFERENCES users(user_id),
+    FOREIGN KEY (sender_id) REFERENCES users(user_id)
 );
 
 -- ATTACHMENT TABLE
@@ -153,8 +156,15 @@ CREATE TABLE bookmark (
 CREATE TABLE recently_viewed (
     recently_viewed_id SERIAL PRIMARY KEY,
     client_id INT REFERENCES client(client_id) ON DELETE SET NULL,
+<<<<<<< HEAD
+    freelancer_id INT REFERENCES freelancer(freelancer_id) ON DELETE SET NULL
+=======
     freelancer_id INT REFERENCES freelancer(freelancer_id) ON DELETE SET NULL,
     time_added TIMESTAMP DEFAULT NOW()
+<<<<<<< HEAD
+>>>>>>> 07f15233adc08e2a79345ad23182297e6120ebb9
+);
+=======
 );
 
 CREATE TABLE skill(
@@ -168,9 +178,20 @@ CREATE TABLE skill(
 );
 
 
+CREATE TABLE chat_room (
+    chat_room_id SERIAL PRIMARY KEY,
+    proposal_id INT REFERENCES proposal(proposal_id),
+    Type VARCHAR(20) DEFAULT 'individual' NOT NULL CHECK (Type IN ('individual', 'group', 'channel')),
+    Name VARCHAR(255),
+    CreatedAt TIMESTAMPTZ DEFAULT NOW()
+);
+
+
+
 
 SELECT users.first_name,users.last_name,users.profile_picture,users.geom ,users.is_verified ,freelancer.freelancer_id ,freelancer.rating,freelancer.reviews_count,freelancer.response_rate,freelancer.response_time ,freelancer.days_available,freelancer.hourly_rate  
 FROM recently_viewed 
 inner join freelancer on freelancer.freelancer_id=recently_viewed.freelancer_id
 inner join users  on freelancer.user_id =users.user_id 
 WHERE recently_viewed.client_id=7;
+>>>>>>> ff391415a98f6a2b8c16eb8513cbfa86e0c47ab8

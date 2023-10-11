@@ -1,13 +1,37 @@
 // messageController.js
 const chatService = require('../services/chat.service');
 
+//CREATE CHAT ROOM
+async function createChatRoom(req, res) {
+    try {
+        const { sent_to_id, proposal_id, message_text } = req.body;
+        const sent_from_id = req.user;
+        const result = await chatService.createChatRoom(sent_to_id, sent_from_id, proposal_id, message_text);
+        res.status(201).json(result);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+}
+
+// DELETE CHAT ROOM
+async function deleteChatRoom(req, res) {
+    try {
+        const { chatRoomId } = req.params;
+        await chatService.deleteChatRoom(chatRoomId); // Call your service function to delete the chat room
+        res.status(200).json({ message: 'Chat Room Deleted.' });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+}
 
 //SEND MESSEGE
 async function sendMessage(req, res) {
     try {
-        const { sent_to_id, proposal_id, message_text } = req.body;
+        const { chat_room_id, sent_to_id, proposal_id, message_text } = req.body;
         const sent_from_id = req.user;
-        const result = await chatService.sendMessage(sent_to_id, sent_from_id, proposal_id, message_text);
+        const result = await chatService.sendMessage(sent_to_id, sent_from_id, proposal_id, message_text, chat_room_id);
         io.to(sent_to_id).emit('newMessage', {
             sent_from_id,
             proposal_id,
@@ -33,6 +57,8 @@ const getAttachments = async (req, res) => {
 };
 
 module.exports = {
+    createChatRoom,
     sendMessage,
-    getAttachments
+    getAttachments,
+    deleteChatRoom
 };
