@@ -23,6 +23,7 @@ router.get('/get-job-proposals/:jobId',validateToken, clientController.getJobPro
 router.get('/get-job-proposal/:proposalId',validateToken, clientController.getProposal);
 router.put('/accept-proposal',validateToken, clientController.acceptProposal);
 router.put('/reject-proposal',validateToken, clientController.rejectProposal);
-
+router.get('/get-projects',validateToken, clientController.getProjects);
+router.get('/get-project/:projectId',validateToken, clientController.getProjectById);
 
 module.exports = router

@@ -220,7 +220,8 @@ async function getProposal(req, res) {
 async function acceptProposal(req, res) {
     try {
         const { proposalId } = req.body;
-        const proposal = await clientService.acceptProposal(proposalId);
+        const userId = req.user
+        const proposal = await clientService.acceptProposal(proposalId, userId);
         res.status(200).json(proposal);
     } catch (error) {
         console.error(error.message);
@@ -234,6 +235,29 @@ async function rejectProposal(req, res) {
         const { proposalId } = req.body;
         const proposal = await clientService.rejectProposal(proposalId);
         res.status(200).json(proposal);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+}
+
+//GET PROJECTS
+async function getProjects(req, res) {
+    try {
+        const projects = await clientService.getProjects();
+        res.status(200).json(projects);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+}
+
+//GET PROJECT BY SPECIFIC ID
+async function getProjectById(req, res) {
+    try {
+        const projectId = req.params.projectId;
+        const project = await clientService.getProjectById(projectId);
+        res.status(200).json(project);
     } catch (error) {
         console.error(error.message);
         res.status(500).json({ error: 'Server error' });
@@ -259,7 +283,9 @@ module.exports = {
     getJobProposals,
     getProposal,
     acceptProposal,
-    rejectProposal
+    rejectProposal,
+    getProjectById,
+    getProjects
 }
 
 

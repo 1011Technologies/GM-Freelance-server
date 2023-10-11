@@ -396,22 +396,47 @@ async function getProposal(proposalId) {
 }
 
 // Accept a proposal
-async function acceptProposal(proposalId) {
+async function acceptProposal(proposalId, userId) {
     try {
         await pool.query('BEGIN');
-        const acceptProposal = await pool.query(
-            `UPDATE proposal
-            SET proposal_status = 'accepted'
-            WHERE proposal.proposal_id = $1;`,
-            [proposalId],
+        const client = await pool.query(
+            'SELECT client_id FROM client WHERE user_id=$1',
+            [userId]
         );
-        await pool.query('COMMIT');
-        return { message: 'Proposal accepted successfully' };
+
+        const Proposal = await pool.query(
+            `SELECT proposal.freelancer_id, job.job_title,proposal.proposal_status,proposal.proposed_duration from proposal
+            INNER JOIN job on job.job_id=proposal.job_id
+            where proposal.proposal_id=$1`,
+            [proposalId]
+        );
+        const days = Proposal.rows[0].proposed_duration;
+        const currentDate = new Date();
+        currentDate.setDate(currentDate.getDate() + days);
+        const endTime = currentDate.toISOString().slice(0, 23);
+        if (Proposal.rows[0].proposal_status === 'submitted') {
+            await pool.query(
+                `UPDATE proposal
+                SET proposal_status = 'accepted'
+                WHERE proposal_id = $1;`,
+                [proposalId],
+            );
+
+            await pool.query(
+                `INSERT INTO project (proposal_id, freelancer_id, client_id, end_time, project_title)
+                VALUES ($1, $2, $3, $4, $5)`,
+                [proposalId, Proposal.rows[0].freelancer_id, client.rows[0].client_id, endTime, Proposal.rows[0].job_title]
+            );
+
+            await pool.query('COMMIT');
+            return { message: 'Proposal accepted successfully' };
+        }
     } catch (error) {
         await pool.query('ROLLBACK');
         throw error;
     }
 }
+
 
 // Reject a proposal
 async function rejectProposal(proposalId) {
@@ -431,6 +456,43 @@ async function rejectProposal(proposalId) {
     }
 }
 
+// GET ALL FREELANCERS
+async function getProjects() {
+    try {
+        await pool.query('BEGIN');
+        const result = await pool.query(
+            'SELECT * FROM project'
+        );
+
+        if (result.rows.length > 0) {
+            const projects = result.rows;
+            await pool.query('COMMIT');
+            return projects;
+        }
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        throw error;
+    }
+}
+
+// GET FREELANCER BY SPECIFIC ID
+async function getProjectById(projectId) {
+    try {
+        await pool.query('BEGIN');
+        const result = await pool.query(
+            `SELECT * FROM project where project_id=$1`,
+            [projectId]
+        );
+        if (result.rows.length > 0) {
+            const freelancer = result.rows[0];
+            await pool.query('COMMIT');
+            return freelancer;
+        }
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        throw error;
+    }
+}
 module.exports = {
     updateClientData,
     getClientData,
@@ -451,5 +513,7 @@ module.exports = {
     getJobProposals,
     getProposal,
     acceptProposal,
-    rejectProposal
+    rejectProposal,
+    getProjectById,
+    getProjects
 };
