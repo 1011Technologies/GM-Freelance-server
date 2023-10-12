@@ -404,17 +404,17 @@ async function acceptProposal(proposalId, userId) {
             [userId]
         );
 
-        const Proposal = await pool.query(
-            `SELECT proposal.freelancer_id, job.job_title,proposal.proposal_status,proposal.proposed_duration from proposal
+        const result = await pool.query(
+            `SELECT proposal.freelancer_id, proposal.proposed_price, proposal.proposed_duration, job.job_title, job.description, proposal.proposal_status from proposal
             INNER JOIN job on job.job_id=proposal.job_id
             where proposal.proposal_id=$1`,
             [proposalId]
         );
-        const days = Proposal.rows[0].proposed_duration;
+        const days = result.rows[0].proposed_duration;
         const currentDate = new Date();
         currentDate.setDate(currentDate.getDate() + days);
         const endTime = currentDate.toISOString().slice(0, 23);
-        if (Proposal.rows[0].proposal_status === 'submitted') {
+        if (result.rows[0].proposal_status === 'submitted') {
             await pool.query(
                 `UPDATE proposal
                 SET proposal_status = 'accepted'
@@ -423,20 +423,25 @@ async function acceptProposal(proposalId, userId) {
             );
 
             await pool.query(
-                `INSERT INTO project (proposal_id, freelancer_id, client_id, end_time, project_title)
-                VALUES ($1, $2, $3, $4, $5)`,
-                [proposalId, Proposal.rows[0].freelancer_id, client.rows[0].client_id, endTime, Proposal.rows[0].job_title]
+                `INSERT INTO project (proposal_id, freelancer_id, client_id, end_time, project_price, project_duration, project_title, project_description)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+                [proposalId, result.rows[0].freelancer_id, client.rows[0].client_id, endTime, result.rows[0].proposed_price, result.rows[0].proposed_duration, result.rows[0].job_title, result.rows[0].description]
             );
 
+            const projectId = await pool.query(
+                `SELECT project_id FROM project
+                WHERE proposal_id = $1`,
+                [proposalId]
+            );
+            
             await pool.query('COMMIT');
-            return { message: 'Proposal accepted successfully' };
+            return { message: 'Proposal accepted successfully', projectId: projectId.rows[0].project_id};
         }
     } catch (error) {
         await pool.query('ROLLBACK');
         throw error;
     }
 }
-
 
 // Reject a proposal
 async function rejectProposal(proposalId) {
@@ -456,12 +461,19 @@ async function rejectProposal(proposalId) {
     }
 }
 
-// GET ALL FREELANCERS
-async function getProjects() {
+// GET ALL PROJECTS
+async function getProjects(userId) {
     try {
         await pool.query('BEGIN');
+        const client = await pool.query(
+            'SELECT client_id FROM client WHERE user_id=$1',
+            [userId]
+        );
+
         const result = await pool.query(
-            'SELECT * FROM project'
+            `SELECT * FROM project
+            WHERE project.client_id = $1;`,
+            [client.rows[0].client_id],
         );
 
         if (result.rows.length > 0) {
@@ -475,18 +487,19 @@ async function getProjects() {
     }
 }
 
-// GET FREELANCER BY SPECIFIC ID
+// GET PROJECT BY SPECIFIC ID
 async function getProjectById(projectId) {
     try {
         await pool.query('BEGIN');
         const result = await pool.query(
-            `SELECT * FROM project where project_id=$1`,
-            [projectId]
+            `SELECT * FROM project
+            WHERE project.project_id = $1;`,
+            [projectId],
         );
         if (result.rows.length > 0) {
-            const freelancer = result.rows[0];
+            const project = result.rows[0];
             await pool.query('COMMIT');
-            return freelancer;
+            return project;
         }
     } catch (error) {
         await pool.query('ROLLBACK');
@@ -514,6 +527,6 @@ module.exports = {
     getProposal,
     acceptProposal,
     rejectProposal,
+    getProjects,
     getProjectById,
-    getProjects
 };

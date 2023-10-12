@@ -244,7 +244,8 @@ async function rejectProposal(req, res) {
 //GET PROJECTS
 async function getProjects(req, res) {
     try {
-        const projects = await clientService.getProjects();
+        const userId = req.user;
+        const projects = await clientService.getProjects(userId);
         res.status(200).json(projects);
     } catch (error) {
         console.error(error.message);
