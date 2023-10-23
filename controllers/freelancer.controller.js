@@ -128,8 +128,9 @@ async function getProposals(req, res) {
 // GET PROPOSAL BY JOB ID
 async function getProposal(req, res) {
     try {
+        const userId = req.user;
         const jobId = req.params.jobId;
-        const proposal = await freelancerService.getProposalByJobId(jobId);
+        const proposal = await freelancerService.getProposalByJobId(userId, jobId);
 
         if (proposal.message) {
             res.status(404).json(proposal);

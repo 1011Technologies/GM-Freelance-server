@@ -182,12 +182,23 @@ async function getProposalsByUserId(userId) {
 }
 
 // GET PROPOSAL BY JOB ID
-async function getProposalByJobId(jobId) {
+async function getProposalByJobId(userId, jobId) {
     try {
+        const freelancerDetails = await pool.query(
+            'SELECT freelancer_id FROM freelancer WHERE user_id = $1',
+            [userId]
+        );
+  
+        if (freelancerDetails.rows.length === 0) {
+            return { message: 'User is not a freelancer' };
+        }
+  
+        const freelancerId = freelancerDetails.rows[0].freelancer_id;
+        
         await pool.query('BEGIN');
         const result = await pool.query(
-            'SELECT * FROM proposal WHERE job_id = $1',
-            [jobId]
+            'SELECT * FROM proposal WHERE job_id = $1 AND freelancer_id = $2',
+            [jobId, freelancerId]
         );
 
         if (result.rows.length > 0) {
