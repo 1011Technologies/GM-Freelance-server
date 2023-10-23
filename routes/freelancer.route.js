@@ -31,9 +31,7 @@ router.get('/get-proposal/:jobId',validateToken, freelancerController.getProposa
 router.put('/update-freelancer-data',validateToken, freelancerController.updateData);
 router.put('/update-certification',validateToken, freelancerController.addCertificate);
 router.put('/update-skills',validateToken, freelancerController.addSkill);
-
-
-
-
+router.get('/get-projects',validateToken, freelancerController.getProjects);
+router.get('/get-project/:projectId',validateToken, freelancerController.getProjectById);
 
 module.exports = router;

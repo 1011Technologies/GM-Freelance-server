@@ -266,6 +266,52 @@ async function addSkill(userId, skill_1, skill_2, skill_3, skill_4, skill_5) {
     }
 }
 
+// GET ALL PROJECTS
+async function getProjects(userId) {
+    try {
+        await pool.query('BEGIN');
+        const freelancer = await pool.query(
+            'SELECT freelancer_id FROM freelancer WHERE user_id=$1',
+            [userId]
+        );
+
+        const result = await pool.query(
+            `SELECT * FROM project
+            WHERE project.freelancer_id = $1;`,
+            [freelancer.rows[0].freelancer_id],
+        );
+
+        if (result.rows.length > 0) {
+            const projects = result.rows;
+            await pool.query('COMMIT');
+            return projects;
+        }
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        throw error;
+    }
+}
+
+// GET PROJECT BY SPECIFIC ID
+async function getProjectById(projectId) {
+    try {
+        await pool.query('BEGIN');
+        const result = await pool.query(
+            `SELECT * FROM project
+            WHERE project.project_id = $1;`,
+            [projectId],
+        );
+        if (result.rows.length > 0) {
+            const project = result.rows[0];
+            await pool.query('COMMIT');
+            return project;
+        }
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        throw error;
+    }
+}
+
 module.exports = {
     getFreelancerDataByUserId,
     submitProposal,
@@ -278,5 +324,7 @@ module.exports = {
     getProposalByJobId,
     updateData,
     addCertificate,
-    addSkill
+    addSkill,
+    getProjects,
+    getProjectById,
 };

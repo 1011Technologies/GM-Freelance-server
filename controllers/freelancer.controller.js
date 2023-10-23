@@ -188,6 +188,29 @@ async function addSkill(req, res) {
     }
 }
 
+//GET PROJECTS
+async function getProjects(req, res) {
+    try {
+        const userId = req.user;
+        const projects = await freelancerService.getProjects(userId);
+        res.status(200).json(projects);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+}
+
+//GET PROJECT BY SPECIFIC ID
+async function getProjectById(req, res) {
+    try {
+        const projectId = req.params.projectId;
+        const project = await freelancerService.getProjectById(projectId);
+        res.status(200).json(project);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+}
 
 module.exports = {
     getFreelancerData,
@@ -202,5 +225,7 @@ module.exports = {
     getProposal,
     updateData,
     addCertificate,
-    addSkill
+    addSkill,
+    getProjects,
+    getProjectById,
 }
