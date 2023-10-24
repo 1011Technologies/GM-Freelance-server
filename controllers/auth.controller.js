@@ -9,7 +9,7 @@ async function loginUser(req, res) {
         res.json({ token });
     } catch (err) {
         console.error(err.message);
-        res.status(400).json({ error: err.message });
+        res.status(400).json({ message: err.message });
     }
 }
 //SIGN UP
@@ -20,7 +20,7 @@ async function createUser(req, res) {
         res.status(200).json(result);
     } catch (err) {
         console.error(err.message);
-        res.status(400).json({ error: err.message });
+        res.status(400).json({ message: err.message });
     }
 }
 

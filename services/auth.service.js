@@ -94,7 +94,7 @@ async function register(userDetail) {
 
             return {
                 token,
-                status: "User registered successfully.",
+                message: "User registered successfully.",
             };
         } else {
             throw new Error("Already registered.");
